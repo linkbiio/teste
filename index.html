@@ -54,14 +54,14 @@ canvas { background:#111; border-radius:10px; width:100%; max-width:800px; heigh
   <input type="text" id="usuario" placeholder="Usuário" />
   <input type="password" id="senha" placeholder="Senha" />
   <button onclick="fazerLogin()">Entrar</button>
-  <p class="login-msg" id="login-msg" onclick="mostrarCadastro()">Não tem conta? Clique aqui para criar</p>
+  <p class="login-msg" id="login-msg" onclick="mostrarCadastro()">Não tem conta? Clique aqui</p>
 </div>
 
 <div class="login-box" id="cadastro-box" style="display:none;">
   <input type="text" id="novoUsuario" placeholder="Novo usuário" />
   <input type="password" id="novaSenha" placeholder="Senha" />
   <button onclick="criarUsuario()">Cadastrar</button>
-  <p class="login-msg" id="cadastro-msg" onclick="mostrarLogin()">Já tem conta? Clique aqui para entrar</p>
+  <p class="login-msg" id="cadastro-msg" onclick="mostrarLogin()">Já tem conta? Clique aqui</p>
 </div>
 </div>
 
@@ -146,53 +146,47 @@ let dadosUsuario = { ganhosDia:0, ganhosSemana:0, ganhosMes:0, fluxo:[] };
   }
 })();
 
-function mostrarCadastro(){
-  document.getElementById("login-box").style.display = "none";
-  document.getElementById("cadastro-box").style.display = "block";
-}
-function mostrarLogin(){
-  document.getElementById("cadastro-box").style.display = "none";
-  document.getElementById("login-box").style.display = "block";
-}
+function mostrarCadastro(){ document.getElementById("login-box").style.display="none"; document.getElementById("cadastro-box").style.display="block"; }
+function mostrarLogin(){ document.getElementById("cadastro-box").style.display="none"; document.getElementById("login-box").style.display="block"; }
 
 function fazerLogin(){
   const userInput = document.getElementById("usuario").value;
   const senhaInput = document.getElementById("senha").value;
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
-  if(todosUsuarios[userInput] && todosUsuarios[userInput].senha === senhaInput){
-    usuarioAtual = userInput;
-    localStorage.setItem("binaryclubLogado", usuarioAtual);
-    carregarDadosUsuario();
-    mostrarPlataforma();
-  } else {
-    document.getElementById("login-msg").textContent = "Usuário ou senha incorretos!";
-  }
+  if(todosUsuarios[userInput]){
+    if(!todosUsuarios[userInput].ativo){
+      document.getElementById("login-msg").textContent = "Usuário inativo. Mensalidade não paga!";
+      return;
+    }
+    if(todosUsuarios[userInput].senha === senhaInput){
+      usuarioAtual = userInput;
+      localStorage.setItem("binaryclubLogado", usuarioAtual);
+      carregarDadosUsuario();
+      mostrarPlataforma();
+    } else { document.getElementById("login-msg").textContent = "Senha incorreta!"; }
+  } else { document.getElementById("login-msg").textContent = "Usuário não encontrado!"; }
 }
 
 function criarUsuario(){
   const novoUser = document.getElementById("novoUsuario").value;
   const novaSenha = document.getElementById("novaSenha").value;
+  if(!novoUser || !novaSenha){ document.getElementById("cadastro-msg").textContent="Preencha todos os campos!"; return; }
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
-  if(todosUsuarios[novoUser]){
-    document.getElementById("cadastro-msg").textContent = "Usuário já existe!";
-    return;
-  }
+  if(todosUsuarios[novoUser]){ document.getElementById("cadastro-msg").textContent = "Usuário já existe!"; return; }
   todosUsuarios[novoUser] = { senha:novaSenha, ativo:true };
   localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
   localStorage.setItem("binaryclub_" + novoUser, JSON.stringify(dadosUsuario));
-  document.getElementById("cadastro-msg").textContent = "Cadastro realizado! Faça login.";
+  document.getElementById("cadastro-msg").textContent="Cadastro realizado! Faça login.";
   mostrarLogin();
 }
 
 function carregarDadosUsuario(){
   const dados = JSON.parse(localStorage.getItem("binaryclub_" + usuarioAtual));
   if(dados) dadosUsuario = dados;
-
   document.getElementById("userNome").innerText = usuarioAtual;
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
   const status = todosUsuarios[usuarioAtual].ativo ? "Ativo" : "Inativo";
   document.getElementById("userStatus").innerText = status;
-
   document.getElementById('dia').innerText = `R$ ${dadosUsuario.ganhosDia.toFixed(2)}`;
   document.getElementById('semana').innerText = `R$ ${dadosUsuario.ganhosSemana.toFixed(2)}`;
   document.getElementById('mes').innerText = `R$ ${dadosUsuario.ganhosMes.toFixed(2)}`;
@@ -200,15 +194,8 @@ function carregarDadosUsuario(){
   atualizarGrafico();
 }
 
-function mostrarPlataforma(){
-  document.getElementById("login-screen").style.display = "none";
-  document.getElementById("platform").style.display = "block";
-}
-
-function logout(){
-  localStorage.removeItem("binaryclubLogado");
-  location.reload();
-}
+function mostrarPlataforma(){ document.getElementById("login-screen").style.display="none"; document.getElementById("platform").style.display="block"; }
+function logout(){ localStorage.removeItem("binaryclubLogado"); location.reload(); }
 
 if(localStorage.getItem("binaryclubLogado")){
   usuarioAtual = localStorage.getItem("binaryclubLogado");
@@ -218,14 +205,7 @@ if(localStorage.getItem("binaryclubLogado")){
 
 const tabs = document.querySelectorAll('.tab-btn');
 const sections = document.querySelectorAll('.section');
-tabs.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    tabs.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    sections.forEach(s=>s.classList.remove('active'));
-    document.getElementById(btn.dataset.tab).classList.add('active');
-  });
-});
+tabs.forEach(btn=>{ btn.addEventListener('click',()=>{ tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); sections.forEach(s=>s.classList.remove('active')); document.getElementById(btn.dataset.tab).classList.add('active'); }); });
 
 const ctx = document.getElementById('grafico').getContext('2d');
 const grafico = new Chart(ctx, {
@@ -234,17 +214,12 @@ const grafico = new Chart(ctx, {
   options:{ scales:{ y:{ beginAtZero:true } } }
 });
 
-function atualizarGrafico(){
-  grafico.data.datasets[0].data = [dadosUsuario.ganhosDia, dadosUsuario.ganhosSemana, dadosUsuario.ganhosMes];
-  grafico.update();
-}
-
+function atualizarGrafico(){ grafico.data.datasets[0].data = [dadosUsuario.ganhosDia,dadosUsuario.ganhosSemana,dadosUsuario.ganhosMes]; grafico.update(); }
 function atualizarTabela(){
-  const tbody = document.getElementById("tabelaFluxo").querySelector("tbody");
-  tbody.innerHTML = "";
+  const tbody = document.getElementById("tabelaFluxo").querySelector("tbody"); tbody.innerHTML="";
   dadosUsuario.fluxo.forEach(linha=>{
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${linha.data}</td><td>R$ ${linha.ganho.toFixed(2)}</td><td>R$ ${linha.perda.toFixed(2)}</td><td>R$ ${linha.resultado.toFixed(2)}</td>`;
+    tr.innerHTML=`<td>${linha.data}</td><td>R$ ${linha.ganho.toFixed(2)}</td><td>R$ ${linha.perda.toFixed(2)}</td><td>R$ ${linha.resultado.toFixed(2)}</td>`;
     tbody.appendChild(tr);
   });
 }
