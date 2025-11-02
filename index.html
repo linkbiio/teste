@@ -1,281 +1,249 @@
-import React, { useState, useMemo } from "react";
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Binaryclub - Plataforma de Treinamento</title>
+    <meta name="description" content="Plataforma Binaryclub — Videoaulas, Gestão de Banca e Lives Diárias" />
+    <meta name="theme-color" content="#000000" />
 
-// Binaryclub - Single-file React component (TailwindCSS + Recharts)
-// Features included:
-// - Top navigation (Video Aulas, Gestão, Lives)
-// - Video lessons list with embedded player
-// - Finance dashboard (day / week / month) with totals and a chart
-// - Daily lives section with live player placeholder and schedule
-// - Mock data (so the component runs without backend)
+    <!-- Fonte e Tailwind -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
 
-// NOTE: This file expects TailwindCSS to be available in the project and
-// Recharts installed: `npm install recharts`.
+    <!-- Recharts e React via CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(to bottom, #000, #111, #222);
+        color: #fff;
+        margin: 0;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ffcc00;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
 
-export default function BinaryclubApp() {
-  const [tab, setTab] = useState("videos");
-  const [period, setPeriod] = useState("day");
-  const [selectedVideo, setSelectedVideo] = useState(null);
+    <!-- App principal -->
+    <script type="text/babel">
 
-  // Mock video lessons
-  const videos = [
-    {
-      id: 1,
-      title: "Aula 1 - Introdução às Opções Binárias",
-      desc: "Conceitos básicos e mindset",
-      url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-    {
-      id: 2,
-      title: "Aula 2 - Leitura de Velas (OB)",
-      desc: "Padrões essenciais",
-      url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-    {
-      id: 3,
-      title: "Aula 3 - Gestão de Banca e Alavancagem",
-      desc: "Como gerenciar riscos e stops",
-      url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-  ];
+      const { useState, useMemo } = React;
+      const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
 
-  // Mock finance data for day/week/month
-  const financeData = {
-    day: [
-      { name: "00:00", value: 0 },
-      { name: "06:00", value: -50 },
-      { name: "12:00", value: 120 },
-      { name: "18:00", value: 30 },
-    ],
-    week: [
-      { name: "Seg", value: 200 },
-      { name: "Ter", value: -100 },
-      { name: "Qua", value: 300 },
-      { name: "Qui", value: 0 },
-      { name: "Sex", value: 150 },
-      { name: "Sab", value: -50 },
-      { name: "Dom", value: 80 },
-    ],
-    month: Array.from({ length: 30 }).map((_, i) => ({
-      name: `${i + 1}`,
-      value: Math.round(Math.sin(i / 3) * 200 + (Math.random() - 0.5) * 100),
-    })),
-  };
+      function TabButton({ children, active, onClick }) {
+        return (
+          <button
+            onClick={onClick}
+            className={
+              "px-4 py-2 rounded-md font-semibold " +
+              (active
+                ? "bg-yellow-500 text-black"
+                : "bg-gray-800/60 hover:bg-gray-800")
+            }
+          >
+            {children}
+          </button>
+        );
+      }
 
-  const totals = useMemo(() => {
-    // calculate total earned, lost, stops from the selected period data
-    const arr = financeData[period] || [];
-    let earned = 0;
-    let lost = 0;
-    let stops = 0; // mock: count negative values as losses and values under -80 as stops
-
-    arr.forEach((p) => {
-      if (p.value > 0) earned += p.value;
-      if (p.value < 0) lost += Math.abs(p.value);
-      if (p.value <= -80) stops += 1;
-    });
-
-    return { earned, lost, stops };
-  }, [period]);
-
-  // Mock lives schedule
-  const lives = [
-    { id: 1, title: "Live diária - Análise de Abertura", time: "Hoje - 09:00" },
-    { id: 2, title: "Live Backtesting OTC", time: "Hoje - 15:00" },
-    { id: 3, title: "Q&A com Thurzin Trader", time: "Amanhã - 20:00" },
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white font-sans">
-      <header className="max-w-6xl mx-auto p-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-400 to-yellow-600 flex items-center justify-center text-black font-bold">BC</div>
-          <div>
-            <h1 className="text-2xl font-extrabold">Binaryclub</h1>
-            <p className="text-sm text-gray-300">Plataforma de treinamento e gestão</p>
+      function DashboardCard({ label, value, negative }) {
+        return (
+          <div
+            className={
+              "p-3 rounded-lg text-center min-w-[120px] " +
+              (negative ? "bg-red-700/30" : "bg-gray-800/40")
+            }
+          >
+            <div className="text-xs text-gray-300">{label}</div>
+            <div className="font-bold">{value}</div>
           </div>
-        </div>
+        );
+      }
 
-        <nav className="flex gap-3">
-          <TabButton active={tab === "videos"} onClick={() => setTab("videos")}>Vídeo Aulas</TabButton>
-          <TabButton active={tab === "dashboard"} onClick={() => setTab("dashboard")}>Gestão</TabButton>
-          <TabButton active={tab === "lives"} onClick={() => setTab("lives")}>Lives</TabButton>
-        </nav>
-      </header>
+      function BinaryclubApp() {
+        const [tab, setTab] = useState("videos");
+        const [period, setPeriod] = useState("day");
+        const [selectedVideo, setSelectedVideo] = useState(null);
 
-      <main className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left column - main content */}
-        <section className="md:col-span-2 bg-gray-900/70 rounded-2xl p-6 shadow-lg">
-          {tab === "videos" && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Vídeo Aulas</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                  {/* Player */}
-                  {selectedVideo ? (
-                    <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
-                      <iframe title={selectedVideo.title} src={selectedVideo.url} className="w-full h-full" frameBorder="0" allowFullScreen />
-                    </div>
-                  ) : (
-                    <div className="w-full aspect-video bg-gray-800 rounded-lg flex items-center justify-center text-gray-400">Selecione uma aula para começar</div>
-                  )}
+        const videos = [
+          { id: 1, title: "Aula 1 - Introdução às Opções Binárias", desc: "Conceitos básicos e mindset", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+          { id: 2, title: "Aula 2 - Leitura de Velas (OB)", desc: "Padrões essenciais", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+          { id: 3, title: "Aula 3 - Gestão de Banca e Alavancagem", desc: "Como gerenciar riscos e stops", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+        ];
 
-                  <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                    <h3 className="font-semibold">Descrição</h3>
-                    <p className="text-sm text-gray-300">{selectedVideo ? selectedVideo.desc : "Nenhuma aula selecionada"}</p>
-                  </div>
-                </div>
+        const financeData = {
+          day: [
+            { name: "00:00", value: 0 },
+            { name: "06:00", value: -50 },
+            { name: "12:00", value: 120 },
+            { name: "18:00", value: 30 },
+          ],
+          week: [
+            { name: "Seg", value: 200 },
+            { name: "Ter", value: -100 },
+            { name: "Qua", value: 300 },
+            { name: "Qui", value: 0 },
+            { name: "Sex", value: 150 },
+            { name: "Sab", value: -50 },
+            { name: "Dom", value: 80 },
+          ],
+          month: Array.from({ length: 30 }).map((_, i) => ({
+            name: `${i + 1}`,
+            value: Math.round(Math.sin(i / 3) * 200 + (Math.random() - 0.5) * 100),
+          })),
+        };
 
-                <div className="space-y-3">
-                  {videos.map((v) => (
-                    <button key={v.id} onClick={() => setSelectedVideo(v)} className={`w-full text-left p-3 rounded-lg transition-shadow ${selectedVideo?.id === v.id ? "bg-yellow-500 text-black" : "bg-gray-800/60 hover:bg-gray-800"}`}>
-                      <div className="font-semibold">{v.title}</div>
-                      <div className="text-xs text-gray-300">{v.desc}</div>
-                    </button>
-                  ))}
+        const totals = useMemo(() => {
+          const arr = financeData[period] || [];
+          let earned = 0, lost = 0, stops = 0;
+          arr.forEach((p) => {
+            if (p.value > 0) earned += p.value;
+            if (p.value < 0) lost += Math.abs(p.value);
+            if (p.value <= -80) stops += 1;
+          });
+          return { earned, lost, stops };
+        }, [period]);
+
+        const lives = [
+          { id: 1, title: "Live diária - Análise de Abertura", time: "Hoje - 09:00" },
+          { id: 2, title: "Live Backtesting OTC", time: "Hoje - 15:00" },
+          { id: 3, title: "Q&A com Thurzin Trader", time: "Amanhã - 20:00" },
+        ];
+
+        return (
+          <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white font-sans">
+            <header className="max-w-6xl mx-auto p-6 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-400 to-yellow-600 flex items-center justify-center text-black font-bold">BC</div>
+                <div>
+                  <h1 className="text-2xl font-extrabold">Binaryclub</h1>
+                  <p className="text-sm text-gray-300">Plataforma de treinamento e gestão</p>
                 </div>
               </div>
-            </div>
-          )}
 
-          {tab === "dashboard" && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Painel de Gestão</h2>
+              <nav className="flex gap-3">
+                <TabButton active={tab === "videos"} onClick={() => setTab("videos")}>Vídeo Aulas</TabButton>
+                <TabButton active={tab === "dashboard"} onClick={() => setTab("dashboard")}>Gestão</TabButton>
+                <TabButton active={tab === "lives"} onClick={() => setTab("lives")}>Lives</TabButton>
+              </nav>
+            </header>
 
-              <div className="flex gap-3 mb-4">
-                <select value={period} onChange={(e) => setPeriod(e.target.value)} className="bg-gray-800 p-2 rounded">
-                  <option value="day">Dia</option>
-                  <option value="week">Semana</option>
-                  <option value="month">Mês</option>
-                </select>
+            <main className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <section className="md:col-span-2 bg-gray-900/70 rounded-2xl p-6 shadow-lg">
+                {tab === "videos" && (
+                  <div>
+                    <h2 className="text-xl font-bold mb-4">Vídeo Aulas</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2">
+                        {selectedVideo ? (
+                          <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
+                            <iframe title={selectedVideo.title} src={selectedVideo.url} className="w-full h-full" frameBorder="0" allowFullScreen></iframe>
+                          </div>
+                        ) : (
+                          <div className="w-full aspect-video bg-gray-800 rounded-lg flex items-center justify-center text-gray-400">Selecione uma aula para começar</div>
+                        )}
+                        <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                          <h3 className="font-semibold">Descrição</h3>
+                          <p className="text-sm text-gray-300">{selectedVideo ? selectedVideo.desc : "Nenhuma aula selecionada"}</p>
+                        </div>
+                      </div>
 
-                <div className="ml-auto flex gap-3">
-                  <DashboardCard label="Faturado" value={`R$ ${totals.earned.toFixed(2)}`} />
-                  <DashboardCard label="Perdido" value={`R$ ${totals.lost.toFixed(2)}`} negative />
-                  <DashboardCard label="Stops" value={`${totals.stops}`} />
-                </div>
-              </div>
-
-              <div style={{ height: 320 }} className="bg-gray-800 rounded p-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={financeData[period]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="value" stroke="#ffd700" strokeWidth={2} dot={{ r: 3 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded bg-gray-800">Histórico de operações (mock)</div>
-                <div className="p-4 rounded bg-gray-800">Configurar Stops e Regras</div>
-                <div className="p-4 rounded bg-gray-800">Exportar relatórios (CSV / XLSX)</div>
-              </div>
-            </div>
-          )}
-
-          {tab === "lives" && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Lives Diárias</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                  {/* Live player placeholder */}
-                  <div className="w-full aspect-video bg-black rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-2xl font-semibold">Live ao vivo</div>
-                      <div className="text-sm text-gray-400">Player ao vivo aparecerá aqui (integração RTMP/YouTube/Twitch)</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                    <h3 className="font-semibold">Descrição da Live</h3>
-                    <p className="text-sm text-gray-300">Análises em tempo real, sinais e interação com alunos.</p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  {lives.map((l) => (
-                    <div key={l.id} className="p-3 rounded bg-gray-800/60 flex flex-col">
-                      <div className="font-semibold">{l.title}</div>
-                      <div className="text-xs text-gray-400">{l.time}</div>
-                      <div className="mt-2 flex gap-2">
-                        <button className="px-3 py-1 rounded bg-yellow-500 text-black text-sm">Entrar</button>
-                        <button className="px-3 py-1 rounded bg-gray-700 text-sm">Lembrar</button>
+                      <div className="space-y-3">
+                        {videos.map((v) => (
+                          <button key={v.id} onClick={() => setSelectedVideo(v)} className={"w-full text-left p-3 rounded-lg transition-shadow " + (selectedVideo?.id === v.id ? "bg-yellow-500 text-black" : "bg-gray-800/60 hover:bg-gray-800")}>
+                            <div className="font-semibold">{v.title}</div>
+                            <div className="text-xs text-gray-300">{v.desc}</div>
+                          </button>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
+                  </div>
+                )}
 
-        {/* Right column - quick overview / profile */}
-        <aside className="space-y-4">
-          <div className="p-4 rounded-2xl bg-gray-900/60">
-            <h3 className="font-semibold">Resumo Rápido</h3>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <div>
-                <div className="text-sm text-gray-400">Faturado</div>
-                <div className="font-bold">R$ {totals.earned.toFixed(0)}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-400">Perdido</div>
-                <div className="font-bold">R$ {totals.lost.toFixed(0)}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-400">Stops</div>
-                <div className="font-bold">{totals.stops}</div>
-              </div>
-            </div>
+                {tab === "dashboard" && (
+                  <div>
+                    <h2 className="text-xl font-bold mb-4">Painel de Gestão</h2>
+
+                    <div className="flex gap-3 mb-4">
+                      <select value={period} onChange={(e) => setPeriod(e.target.value)} className="bg-gray-800 p-2 rounded">
+                        <option value="day">Dia</option>
+                        <option value="week">Semana</option>
+                        <option value="month">Mês</option>
+                      </select>
+
+                      <div className="ml-auto flex gap-3">
+                        <DashboardCard label="Faturado" value={`R$ ${totals.earned.toFixed(2)}`} />
+                        <DashboardCard label="Perdido" value={`R$ ${totals.lost.toFixed(2)}`} negative />
+                        <DashboardCard label="Stops" value={`${totals.stops}`} />
+                      </div>
+                    </div>
+
+                    <div style={{ height: 320 }} className="bg-gray-800 rounded p-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={financeData[period]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line type="monotone" dataKey="value" stroke="#ffd700" strokeWidth={2} dot={{ r: 3 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                )}
+
+                {tab === "lives" && (
+                  <div>
+                    <h2 className="text-xl font-bold mb-4">Lives Diárias</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2">
+                        <div className="w-full aspect-video bg-black rounded-lg flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-2xl font-semibold">Live ao vivo</div>
+                            <div className="text-sm text-gray-400">Player ao vivo aparecerá aqui (RTMP / YouTube / Twitch)</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        {lives.map((l) => (
+                          <div key={l.id} className="p-3 rounded bg-gray-800/60 flex flex-col">
+                            <div className="font-semibold">{l.title}</div>
+                            <div className="text-xs text-gray-400">{l.time}</div>
+                            <div className="mt-2 flex gap-2">
+                              <button className="px-3 py-1 rounded bg-yellow-500 text-black text-sm">Entrar</button>
+                              <button className="px-3 py-1 rounded bg-gray-700 text-sm">Lembrar</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </section>
+            </main>
+
+            <footer className="max-w-6xl mx-auto p-6 text-center text-sm text-gray-400">
+              © {new Date().getFullYear()} Binaryclub — Plataforma de Treinamento
+            </footer>
           </div>
+        );
+      }
 
-          <div className="p-4 rounded-2xl bg-gray-900/60">
-            <h3 className="font-semibold">Atalhos</h3>
-            <div className="mt-3 flex flex-col gap-2">
-              <button className="w-full py-2 rounded bg-yellow-500 text-black font-bold">Registrar Operação</button>
-              <button className="w-full py-2 rounded bg-gray-800">Configurações</button>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-gray-900/60">
-            <h3 className="font-semibold">Perfil</h3>
-            <div className="mt-3 text-sm text-gray-300">Usuário: Aluno (demo)</div>
-            <div className="text-xs text-gray-400 mt-2">Assinatura ativa • Próx. pagamento: 05/11/2025</div>
-          </div>
-        </aside>
-      </main>
-
-      <footer className="max-w-6xl mx-auto p-6 text-center text-sm text-gray-400">© {new Date().getFullYear()} Binaryclub — Plataforma de Treinamento</footer>
-    </div>
-  );
-}
-
-// ---------- Helper components ----------
-function TabButton({ children, active, onClick }) {
-  return (
-    <button onClick={onClick} className={`px-4 py-2 rounded-md font-semibold ${active ? "bg-yellow-500 text-black" : "bg-gray-800/60 hover:bg-gray-800"}`}>
-      {children}
-    </button>
-  );
-}
-
-function DashboardCard({ label, value, negative }) {
-  return (
-    <div className={`p-3 rounded-lg text-center min-w-[120px] ${negative ? "bg-red-700/30" : "bg-gray-800/40"}`}>
-      <div className="text-xs text-gray-300">{label}</div>
-      <div className="font-bold">{value}</div>
-    </div>
-  );
-}
+      ReactDOM.render(<BinaryclubApp />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
