@@ -127,6 +127,7 @@ canvas { background:#111; border-radius:10px; width:100%; max-width:800px; heigh
     <h2>👤 Dados do Usuário</h2>
     <p><strong>Usuário:</strong> <span id="userNome"></span></p>
     <p><strong>Status:</strong> <span id="userStatus"></span></p>
+    <p><strong>Vencimento da Mensalidade:</strong> <span id="userVencimento"></span></p>
   </section>
 </div>
 </div>
@@ -134,19 +135,17 @@ canvas { background:#111; border-radius:10px; width:100%; max-width:800px; heigh
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 let usuarioAtual = null;
-let dadosUsuario = { ganhosDia:0, ganhosSemana:0, ganhosMes:0, fluxo:[] };
+let dadosUsuario = { ganhosDia:0, ganhosSemana:0, ganhosMes:0, fluxo:[], vencimento:null };
 
-// Forçar criação do admin toda vez
+// Forçar criação do admin
 (function usuarioInicial(){
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
-  todosUsuarios['admin'] = { senha:'1234', ativo:true };
+  if(!todosUsuarios['admin']) todosUsuarios['admin']={ senha:'1234', ativo:true };
   localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
-
   if(!localStorage.getItem("binaryclub_admin")){
+    dadosUsuario.vencimento = new Date(new Date().setDate(new Date().getDate()+30)).toISOString(); // +30 dias
     localStorage.setItem("binaryclub_admin", JSON.stringify(dadosUsuario));
   }
-
-  // Limpar login antigo
   localStorage.removeItem("binaryclubLogado");
 })();
 
@@ -159,10 +158,18 @@ function fazerLogin(){
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
 
   if(todosUsuarios[userInput]){
+    let dados = JSON.parse(localStorage.getItem("binaryclub_" + userInput));
+    const hoje = new Date();
+    if(dados.vencimento && new Date(dados.vencimento) < hoje){
+      todosUsuarios[userInput].ativo=false;
+      localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
+    }
+
     if(!todosUsuarios[userInput].ativo){
-      document.getElementById("login-msg").textContent = "Usuário inativo!";
+      document.getElementById("login-msg").textContent = "Usuário inativo! Mensalidade vencida.";
       return;
     }
+
     if(todosUsuarios[userInput].senha === senhaInput){
       usuarioAtual = userInput;
       localStorage.setItem("binaryclubLogado", usuarioAtual);
@@ -180,7 +187,10 @@ function criarUsuario(){
   if(todosUsuarios[novoUser]){ document.getElementById("cadastro-msg").textContent = "Usuário já existe!"; return; }
   todosUsuarios[novoUser] = { senha:novaSenha, ativo:true };
   localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
+
+  dadosUsuario.vencimento = new Date(new Date().setDate(new Date().getDate()+30)).toISOString(); // +30 dias
   localStorage.setItem("binaryclub_" + novoUser, JSON.stringify(dadosUsuario));
+
   document.getElementById("cadastro-msg").textContent="Cadastro realizado! Faça login.";
   mostrarLogin();
 }
@@ -188,10 +198,14 @@ function criarUsuario(){
 function carregarDadosUsuario(){
   const dados = JSON.parse(localStorage.getItem("binaryclub_" + usuarioAtual));
   if(dados) dadosUsuario = dados;
+
   document.getElementById("userNome").innerText = usuarioAtual;
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
   const status = todosUsuarios[usuarioAtual].ativo ? "Ativo" : "Inativo";
   document.getElementById("userStatus").innerText = status;
+
+  document.getElementById("userVencimento").innerText = dadosUsuario.vencimento ? new Date(dadosUsuario.vencimento).toLocaleDateString() : "-";
+
   document.getElementById('dia').innerText = `R$ ${dadosUsuario.ganhosDia.toFixed(2)}`;
   document.getElementById('semana').innerText = `R$ ${dadosUsuario.ganhosSemana.toFixed(2)}`;
   document.getElementById('mes').innerText = `R$ ${dadosUsuario.ganhosMes.toFixed(2)}`;
