@@ -10,7 +10,7 @@
     :root{
       --bg:#0b0b0f;
       --card:#0f0f14;
-      --accent:#c59b00;
+      --accent:#00FFFF; /* Azul ciano profissional */
       --muted:#bfbfbf;
       --whatsapp:#25D366;
     }
@@ -27,7 +27,7 @@
       padding:20px;
       position:relative;
       overflow:hidden;
-      background:var(--bg);
+      background: url('https://images.unsplash.com/photo-1612832021238-76a33baf4266?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NzdlMnwwfDF8c2VhcmNofDN8fGRheSUyMHRyYWRlcmluZ3xlbnwwfHx8fDE2OTg4MzM3NjB8&ixlib=rb-4.0.3&q=80&w=1920') no-repeat center center/cover;
     }
 
     canvas#bgCanvas{
@@ -47,7 +47,7 @@
     }
 
     .card{
-      background:var(--card);
+      background:rgba(15,15,20,0.85);
       padding:30px 25px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,0.08);
@@ -83,7 +83,7 @@
       cursor:pointer;
       transition:0.3s;
     }
-    button:hover{background:#ffd86b;}
+    button:hover{background:#00e5ff;}
 
     .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
     .msg{margin-top:10px;font-size:0.95rem}
@@ -98,7 +98,7 @@
       width:60px;
       height:60px;
       border-radius:12px;
-      background:linear-gradient(135deg,var(--accent),#ffd86b);
+      background:var(--accent);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -257,54 +257,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
     setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
 });
-
-/* CANVAS BACKGROUND - GRÁFICOS */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-let w, h;
-
-function resizeCanvas(){
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-const candles = [];
-const maxCandles = 80;
-for(let i=0;i<maxCandles;i++){
-  const x = i*(w/maxCandles);
-  const y = h/2 + (Math.random()-0.5)*100;
-  const high = y - Math.random()*30;
-  const low = y + Math.random()*30;
-  const open = y - (Math.random()-0.5)*15;
-  const close = y + (Math.random()-0.5)*15;
-  candles.push({x,open,close,high,low});
-}
-
-function drawCandles(){
-  ctx.clearRect(0,0,w,h);
-  for(let c of candles){
-    const color = c.close>c.open?'#84ff8a':'#ff6b6b';
-    // linha high-low
-    ctx.strokeStyle = color;
-    ctx.lineWidth=1.5;
-    ctx.beginPath();
-    ctx.moveTo(c.x, c.high);
-    ctx.lineTo(c.x, c.low);
-    ctx.stroke();
-    // retângulo open-close
-    ctx.fillStyle = color;
-    ctx.fillRect(c.x-3, Math.min(c.open,c.close),6,Math.abs(c.open-c.close));
-    // anima pequena movimentação
-    c.open += (Math.random()-0.5)*1;
-    c.close += (Math.random()-0.5)*1;
-    c.high += (Math.random()-0.5)*0.5;
-    c.low += (Math.random()-0.5)*0.5;
-  }
-  requestAnimationFrame(drawCandles);
-}
-drawCandles();
 </script>
 </body>
 </html>
