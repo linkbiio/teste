@@ -23,19 +23,19 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      background: url('https://images.unsplash.com/photo-1612832021238-76a33baf4266?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NzdlMnwwfDF8c2VhcmNofDN8fGRheSUyMHRyYWRlcmluZ3xlbnwwfHx8fDE2OTg4MzM3NjB8&ixlib=rb-4.0.3&q=80&w=1080') no-repeat center center/cover;
       color:#fff;
       padding:20px;
       position:relative;
       overflow:hidden;
+      background:var(--bg);
     }
 
-    /* Overlay escuro para contraste */
-    body::before{
-      content:"";
+    canvas#bgCanvas{
       position:absolute;
-      top:0; left:0; right:0; bottom:0;
-      background:rgba(0,0,0,0.6);
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
       z-index:0;
     }
 
@@ -134,6 +134,9 @@
   </style>
 </head>
 <body>
+  <!-- Canvas de fundo -->
+  <canvas id="bgCanvas"></canvas>
+
   <div class="wrap">
     <div class="card">
       <div class="logo">
@@ -191,17 +194,15 @@
   </a>
 
 <script>
-/* CONFIG: coloque aqui o link de redirecionamento */
-const CONFIG = {
-  redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" // <- altere para o site que deseja redirecionar
-};
-
-/* STORAGE & UTIL */
+/* CONFIG */
+const CONFIG = { redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" };
 const STORAGE_KEY = "binaryclub_users_v1";
+
+/* USERS STORAGE */
 function loadUsers(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
 function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
 
-/* Hash de senha com SHA-256 (Web Crypto) - retorna hex string */
+/* HASH */
 async function hashPassword(password){
   const enc = new TextEncoder();
   const data = enc.encode(password);
@@ -224,7 +225,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
   showRegister.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; loginView.style.display='none'; registerView.style.display='block'; });
   showLogin.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; registerView.style.display='none'; loginView.style.display='block'; });
 
-  // criar conta
   btnRegister.addEventListener('click', async ()=>{
     regMsg.style.color = '#ffb86b';
     const username = document.getElementById('regUser').value.trim();
@@ -243,7 +243,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
     setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
   });
 
-  // login
   btnLogin.addEventListener('click', async ()=>{
     loginMsg.style.color = '#ffb86b';
     const username = document.getElementById('loginUser').value.trim();
@@ -258,6 +257,54 @@ document.addEventListener('DOMContentLoaded', ()=> {
     setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
 });
+
+/* CANVAS BACKGROUND - GRÁFICOS */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let w, h;
+
+function resizeCanvas(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const candles = [];
+const maxCandles = 80;
+for(let i=0;i<maxCandles;i++){
+  const x = i*(w/maxCandles);
+  const y = h/2 + (Math.random()-0.5)*100;
+  const high = y - Math.random()*30;
+  const low = y + Math.random()*30;
+  const open = y - (Math.random()-0.5)*15;
+  const close = y + (Math.random()-0.5)*15;
+  candles.push({x,open,close,high,low});
+}
+
+function drawCandles(){
+  ctx.clearRect(0,0,w,h);
+  for(let c of candles){
+    const color = c.close>c.open?'#84ff8a':'#ff6b6b';
+    // linha high-low
+    ctx.strokeStyle = color;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.moveTo(c.x, c.high);
+    ctx.lineTo(c.x, c.low);
+    ctx.stroke();
+    // retângulo open-close
+    ctx.fillStyle = color;
+    ctx.fillRect(c.x-3, Math.min(c.open,c.close),6,Math.abs(c.open-c.close));
+    // anima pequena movimentação
+    c.open += (Math.random()-0.5)*1;
+    c.close += (Math.random()-0.5)*1;
+    c.high += (Math.random()-0.5)*0.5;
+    c.low += (Math.random()-0.5)*0.5;
+  }
+  requestAnimationFrame(drawCandles);
+}
+drawCandles();
 </script>
 </body>
 </html>
