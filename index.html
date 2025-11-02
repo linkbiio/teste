@@ -13,7 +13,7 @@
     .login-box input { display:block; width:250px; padding:10px; margin:10px auto; border:none; border-radius:8px; text-align:center; font-size:1rem; }
     .login-box button { background:#00c4ff; border:none; color:#000; font-weight:bold; border-radius:8px; padding:10px 20px; cursor:pointer; transition:background 0.3s; }
     .login-box button:hover { background:#0095cc; }
-    .login-msg { margin-top:10px; color:#ff3b3b; font-weight:600; }
+    .login-msg { margin-top:10px; color:#ff3b3b; font-weight:600; cursor:pointer; }
 
     header { background:linear-gradient(90deg,#111,#1a1a1a); padding:15px 25px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 0 10px #000; }
     header h1 { color:#00c4ff; margin:0; }
@@ -50,11 +50,18 @@
 <!-- Tela de Login -->
 <div id="login-screen">
   <h1>Binaryclub</h1>
-  <div class="login-box">
+  <div class="login-box" id="login-box">
     <input type="text" id="usuario" placeholder="Usuário" />
     <input type="password" id="senha" placeholder="Senha" />
     <button onclick="fazerLogin()">Entrar</button>
-    <p class="login-msg" id="login-msg"></p>
+    <p class="login-msg" id="login-msg" onclick="mostrarCadastro()">Não tem conta? Clique aqui para criar</p>
+  </div>
+
+  <div class="login-box" id="cadastro-box" style="display:none;">
+    <input type="text" id="novoUsuario" placeholder="Novo usuário" />
+    <input type="password" id="novaSenha" placeholder="Senha" />
+    <button onclick="criarUsuario()">Cadastrar</button>
+    <p class="login-msg" id="cadastro-msg" onclick="mostrarLogin()">Já tem conta? Clique aqui para entrar</p>
   </div>
 </div>
 
@@ -79,14 +86,6 @@
         <div class="video-card">
           <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
           <h3>Introdução ao Mercado de OB</h3>
-        </div>
-        <div class="video-card">
-          <iframe src="https://www.youtube.com/embed/zpOULjyy-n8" allowfullscreen></iframe>
-          <h3>Gerenciamento de Risco</h3>
-        </div>
-        <div class="video-card">
-          <iframe src="https://www.youtube.com/embed/ysz5S6PUM-U" allowfullscreen></iframe>
-          <h3>Estratégias em OTC</h3>
         </div>
       </div>
     </section>
@@ -136,20 +135,25 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const loginMsg = document.getElementById("login-msg");
-  const usuarios = [
-    { usuario: "aluno1", senha: "123", ativo: true },
-    { usuario: "aluno2", senha: "456", ativo: false }
-  ];
-
   let usuarioAtual = null;
   let dadosUsuario = { ganhosDia:0, ganhosSemana:0, ganhosMes:0, fluxo:[] };
 
-  function fazerLogin() {
+  function mostrarCadastro(){
+    document.getElementById("login-box").style.display = "none";
+    document.getElementById("cadastro-box").style.display = "block";
+  }
+
+  function mostrarLogin(){
+    document.getElementById("cadastro-box").style.display = "none";
+    document.getElementById("login-box").style.display = "block";
+  }
+
+  function fazerLogin(){
     const userInput = document.getElementById("usuario").value;
     const senhaInput = document.getElementById("senha").value;
-    const user = usuarios.find(u => u.usuario === userInput && u.senha === senhaInput);
-    if(user){
-      usuarioAtual = user.usuario;
+    const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
+    if(todosUsuarios[userInput] && todosUsuarios[userInput].senha === senhaInput){
+      usuarioAtual = userInput;
       localStorage.setItem("binaryclubLogado", usuarioAtual);
       carregarDadosUsuario();
       mostrarPlataforma();
@@ -158,13 +162,29 @@
     }
   }
 
+  function criarUsuario(){
+    const novoUser = document.getElementById("novoUsuario").value;
+    const novaSenha = document.getElementById("novaSenha").value;
+    const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
+    if(todosUsuarios[novoUser]){
+      document.getElementById("cadastro-msg").textContent = "Usuário já existe!";
+      return;
+    }
+    todosUsuarios[novoUser] = { senha: novaSenha, ativo:true };
+    localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
+    // Cria dados iniciais do usuário
+    localStorage.setItem("binaryclub_" + novoUser, JSON.stringify(dadosUsuario));
+    document.getElementById("cadastro-msg").textContent = "Cadastro realizado! Faça login.";
+    mostrarLogin();
+  }
+
   function carregarDadosUsuario(){
     const dados = JSON.parse(localStorage.getItem("binaryclub_" + usuarioAtual));
-    if(dados){
-      dadosUsuario = dados;
-    }
+    if(dados) dadosUsuario = dados;
+
     document.getElementById("userNome").innerText = usuarioAtual;
-    const status = usuarios.find(u=>u.usuario===usuarioAtual).ativo ? "Ativo" : "Inativo";
+    const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
+    const status = todosUsuarios[usuarioAtual].ativo ? "Ativo" : "Inativo";
     document.getElementById("userStatus").innerText = status;
 
     document.getElementById('dia').innerText = `R$ ${dadosUsuario.ganhosDia.toFixed(2)}`;
@@ -174,12 +194,12 @@
     atualizarGrafico();
   }
 
-  function mostrarPlataforma() {
+  function mostrarPlataforma(){
     document.getElementById("login-screen").style.display = "none";
     document.getElementById("platform").style.display = "block";
   }
 
-  function logout() {
+  function logout(){
     localStorage.removeItem("binaryclubLogado");
     location.reload();
   }
@@ -204,10 +224,7 @@
   const ctx = document.getElementById('grafico').getContext('2d');
   const grafico = new Chart(ctx, {
     type:'bar',
-    data:{
-      labels:['Dia','Semana','Mês'],
-      datasets:[{ label:'Lucro (R$)', data:[0,0,0], backgroundColor:['#00c4ff','#008cff','#004cff'] }]
-    },
+    data:{ labels:['Dia','Semana','Mês'], datasets:[{ label:'Lucro (R$)', data:[0,0,0], backgroundColor:['#00c4ff','#008cff','#004cff'] }] },
     options:{ scales:{ y:{ beginAtZero:true } } }
   });
 
@@ -240,6 +257,5 @@
     carregarDadosUsuario();
   }
 </script>
-
 </body>
 </html>
