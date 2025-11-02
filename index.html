@@ -11,10 +11,9 @@
   --whatsapp:#25D366;
 }
 
-*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif;margin:0;padding:0;}
 
 body{
-  margin:0;
   min-height:100vh;
   display:flex;
   align-items:center;
@@ -23,10 +22,19 @@ body{
   padding:20px;
   position:relative;
   overflow:hidden;
-  background:#0b0b0f url('https://images.unsplash.com/photo-1598514982291-6cce0b2fa1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') repeat center center;
-  background-size:cover;
+  background:#0b0b0f url('https://images.unsplash.com/photo-1598514982291-6cce0b2fa1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
 }
 
+/* Canvas para gráficos */
+#bgCanvas{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* Card login */
 .wrap{
   width:100%;
   max-width:420px;
@@ -122,6 +130,8 @@ button:hover{background:#00e5ff;}
 </head>
 <body>
 
+<canvas id="bgCanvas"></canvas>
+
 <div class="wrap">
   <div class="card">
     <div class="logo">
@@ -173,12 +183,12 @@ button:hover{background:#00e5ff;}
   </div>
 </div>
 
-<!-- WhatsApp flutuante -->
 <a href="https://wa.me/5511999999999" target="_blank" class="whatsapp-btn">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="32" height="32">
 </a>
 
 <script>
+/* LOGIN REGISTRATION */
 const CONFIG = { redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" };
 const STORAGE_KEY = "binaryclub_users_v1";
 
@@ -235,6 +245,42 @@ document.addEventListener('DOMContentLoaded', ()=> {
     if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
     setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
+});
+
+/* CANVAS ANIMADO DE GRÁFICOS */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const candles = [];
+for(let i=0;i<50;i++){
+  candles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    w: 6 + Math.random()*4,
+    h: 30 + Math.random()*50,
+    color: Math.random()>0.5?'#00FFFF':'#FF5555',
+    speed: 0.2 + Math.random()*0.5
+  });
+}
+
+function drawCandles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  candles.forEach(c=>{
+    ctx.fillStyle=c.color;
+    ctx.fillRect(c.x, c.y, c.w, c.h);
+    c.y -= c.speed;
+    if(c.y + c.h <0) c.y = canvas.height + Math.random()*50;
+  });
+  requestAnimationFrame(drawCandles);
+}
+
+drawCandles();
+
+window.addEventListener('resize', ()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 });
 </script>
 </body>
