@@ -4,356 +4,139 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Binaryclub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
-      font-family: 'Montserrat', sans-serif;
-      background: #0a0a0a;
+      background-color: #0b0b0b;
       color: #fff;
-      margin: 0;
-      padding: 0;
-      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
     }
-
-    /* === Tela de Login === */
-    #login-screen {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      background: radial-gradient(circle, #111 0%, #000 100%);
+    .active-tab {
+      border-bottom: 2px solid #00ffff;
+      color: #00ffff;
     }
-
-    #login-screen h1 {
-      color: #00c4ff;
-      margin-bottom: 20px;
-    }
-
-    .login-box {
-      background: #1a1a1a;
-      padding: 30px;
-      border-radius: 15px;
-      text-align: center;
-      box-shadow: 0 0 20px #000;
-    }
-
-    .login-box input {
-      display: block;
-      width: 250px;
-      padding: 10px;
-      margin: 10px auto;
-      border: none;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1rem;
-    }
-
-    .login-box button {
-      background: #00c4ff;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      border-radius: 8px;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .login-box button:hover {
-      background: #0095cc;
-    }
-
-    .login-msg {
-      margin-top: 10px;
-      color: #ff3b3b;
-      font-weight: 600;
-    }
-
-    /* === Plataforma === */
-    header {
-      background: linear-gradient(90deg, #111, #1a1a1a);
-      padding: 15px 25px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 0 10px #000;
-    }
-
-    header h1 {
-      color: #00c4ff;
-      margin: 0;
-    }
-
-    nav button {
-      background: transparent;
-      border: none;
-      color: #ccc;
-      font-size: 16px;
-      margin-left: 15px;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-
-    nav button:hover,
-    nav button.active {
-      color: #00c4ff;
-    }
-
-    .container {
-      padding: 30px;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    /* === Vídeo Aulas === */
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .video-card {
-      background: #1a1a1a;
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      transition: transform 0.3s;
-    }
-
-    .video-card:hover {
-      transform: scale(1.05);
-    }
-
-    iframe {
-      width: 100%;
-      height: 180px;
-      border-radius: 10px;
-    }
-
-    /* === Gerenciamento === */
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .stat-card {
-      flex: 1 1 250px;
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .stat-card h2 {
-      margin-bottom: 10px;
-      color: #00c4ff;
-    }
-
-    .input-area {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .input-area input {
-      flex: 1 1 150px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-
-    .input-area button {
-      background: #00c4ff;
-      color: #000;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-
-    canvas {
-      background: #111;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 800px;
-      height: 300px;
-    }
-
-    /* === Lives === */
-    .live-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .live-container iframe {
-      width: 90%;
-      max-width: 800px;
-      height: 450px;
-      border-radius: 10px;
-    }
-
-    .live-container p {
-      margin-top: 15px;
-      font-size: 1.1rem;
-      color: #aaa;
-    }
+    .hidden { display: none; }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-  <!-- Tela de Login -->
-  <div id="login-screen">
-    <h1>Binaryclub</h1>
-    <div class="login-box">
-      <input type="password" id="senha" placeholder="Digite sua senha" />
-      <button onclick="fazerLogin()">Entrar</button>
-      <p class="login-msg" id="login-msg"></p>
-    </div>
-  </div>
+  <!-- Cabeçalho -->
+  <header class="bg-black shadow-lg p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-cyan-400">Binaryclub</h1>
+    <nav class="space-x-4">
+      <button id="tab-videos" class="hover:text-cyan-300">Vídeo Aulas</button>
+      <button id="tab-gestao" class="hover:text-cyan-300">Gerenciamento</button>
+      <button id="tab-lives" class="hover:text-cyan-300">Lives</button>
+    </nav>
+  </header>
 
-  <!-- Plataforma -->
-  <div id="platform" style="display:none;">
-    <header>
-      <h1>Binaryclub</h1>
-      <nav>
-        <button class="tab-btn active" data-tab="videos">Vídeo Aulas</button>
-        <button class="tab-btn" data-tab="gerenciamento">Gerenciamento</button>
-        <button class="tab-btn" data-tab="lives">Lives</button>
-        <button onclick="logout()">Sair</button>
-      </nav>
-    </header>
+  <!-- Conteúdo principal -->
+  <main class="flex-1 p-6">
+    <!-- ABA: Vídeo Aulas -->
+    <section id="content-videos">
+      <h2 class="text-xl font-semibold mb-4 text-cyan-400">Vídeo Aulas</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <iframe class="w-full h-48 rounded-xl" src="https://www.youtube.com/embed/DLzxrzFCyOs" allowfullscreen></iframe>
+        <iframe class="w-full h-48 rounded-xl" src="https://www.youtube.com/embed/G1IbRujko-A" allowfullscreen></iframe>
+        <iframe class="w-full h-48 rounded-xl" src="https://www.youtube.com/embed/oHg5SJYRHA0" allowfullscreen></iframe>
+      </div>
+    </section>
 
-    <div class="container">
-      <!-- Vídeos -->
-      <section id="videos" class="section active">
-        <h2>📚 Suas Aulas</h2>
-        <div class="video-grid">
-          <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-            <h3>Introdução ao Mercado de OB</h3>
-          </div>
-          <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/zpOULjyy-n8" allowfullscreen></iframe>
-            <h3>Gerenciamento de Risco</h3>
-          </div>
-          <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/ysz5S6PUM-U" allowfullscreen></iframe>
-            <h3>Estratégias em OTC</h3>
-          </div>
+    <!-- ABA: Gerenciamento -->
+    <section id="content-gestao" class="hidden">
+      <h2 class="text-xl font-semibold mb-4 text-cyan-400">Gerenciamento Diário / Semanal / Mensal</h2>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-gray-900 p-4 rounded-lg shadow">
+          <h3 class="font-semibold">Faturamento Diário</h3>
+          <input id="faturamento-dia" type="number" class="mt-2 p-2 w-full text-black rounded" placeholder="Ex: 250" />
         </div>
-      </section>
-
-      <!-- Gerenciamento -->
-      <section id="gerenciamento" class="section">
-        <h2>📊 Gerenciamento de Resultados</h2>
-        <div class="input-area">
-          <input type="number" id="ganho" placeholder="Ganhos (R$)" />
-          <input type="number" id="perda" placeholder="Perdas (R$)" />
-          <button onclick="atualizarGerenciamento()">Adicionar</button>
+        <div class="bg-gray-900 p-4 rounded-lg shadow">
+          <h3 class="font-semibold">Perda do Dia</h3>
+          <input id="perda-dia" type="number" class="mt-2 p-2 w-full text-black rounded" placeholder="Ex: 80" />
         </div>
-        <div class="stats">
-          <div class="stat-card"><h2>Dia</h2><p id="dia">R$ 0</p></div>
-          <div class="stat-card"><h2>Semana</h2><p id="semana">R$ 0</p></div>
-          <div class="stat-card"><h2>Mês</h2><p id="mes">R$ 0</p></div>
+        <div class="bg-gray-900 p-4 rounded-lg shadow">
+          <h3 class="font-semibold">Stop Diário</h3>
+          <input id="stop-dia" type="number" class="mt-2 p-2 w-full text-black rounded" placeholder="Ex: 150" />
         </div>
-        <canvas id="grafico"></canvas>
-      </section>
+      </div>
 
-      <!-- Lives -->
-      <section id="lives" class="section">
-        <h2>🎥 Lives Diárias</h2>
-        <div class="live-container">
-          <iframe src="https://www.youtube.com/embed/live_stream?channel=UC_x5XG1OV2P6uZZ5FSM9Ttw" allowfullscreen></iframe>
-          <p>Acompanhe as operações ao vivo todos os dias!</p>
-        </div>
-      </section>
-    </div>
-  </div>
+      <button id="btn-salvar" class="px-6 py-2 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition">
+        Salvar Dados
+      </button>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <div class="mt-8 bg-gray-800 p-4 rounded-lg shadow-lg">
+        <h3 class="text-lg font-semibold mb-2 text-cyan-400">Resumo</h3>
+        <p id="resumo"></p>
+      </div>
+    </section>
+
+    <!-- ABA: Lives -->
+    <section id="content-lives" class="hidden">
+      <h2 class="text-xl font-semibold mb-4 text-cyan-400">Lives Diárias</h2>
+      <p class="mb-4 text-gray-300">Assista às transmissões ao vivo com análises e operações em tempo real.</p>
+      <iframe class="w-full h-96 rounded-xl" src="https://www.youtube.com/embed/live_stream?channel=UC-lHJZR3Gqxm24_Vd_AJ5Yw" allowfullscreen></iframe>
+    </section>
+  </main>
+
+  <footer class="bg-black text-center p-4 text-sm text-gray-400">
+    © 2025 Binaryclub. Todos os direitos reservados.
+  </footer>
+
   <script>
-    const senhaCorreta = "binary123"; // 🔒 altere aqui se quiser mudar a senha
-    const loginMsg = document.getElementById("login-msg");
+    // Alternância entre abas
+    const tabs = {
+      videos: document.getElementById('content-videos'),
+      gestao: document.getElementById('content-gestao'),
+      lives: document.getElementById('content-lives')
+    };
 
-    function fazerLogin() {
-      const senha = document.getElementById("senha").value;
-      if (senha === senhaCorreta) {
-        localStorage.setItem("binaryclubLogado", "true");
-        mostrarPlataforma();
-      } else {
-        loginMsg.textContent = "Senha incorreta!";
-      }
-    }
-
-    function mostrarPlataforma() {
-      document.getElementById("login-screen").style.display = "none";
-      document.getElementById("platform").style.display = "block";
-    }
-
-    function logout() {
-      localStorage.removeItem("binaryclubLogado");
-      location.reload();
-    }
-
-    // Autologin se já estiver logado
-    if (localStorage.getItem("binaryclubLogado") === "true") {
-      mostrarPlataforma();
-    }
-
-    // Tabs
-    const tabs = document.querySelectorAll('.tab-btn');
-    const sections = document.querySelectorAll('.section');
-    tabs.forEach(btn => {
+    document.querySelectorAll('nav button').forEach(btn => {
       btn.addEventListener('click', () => {
-        tabs.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        sections.forEach(s => s.classList.remove('active'));
-        document.getElementById(btn.dataset.tab).classList.add('active');
+        const target = btn.id.split('-')[1];
+        Object.keys(tabs).forEach(key => {
+          tabs[key].classList.toggle('hidden', key !== target);
+        });
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
+        btn.classList.add('active-tab');
       });
     });
 
-    // Gráfico e gerenciamento
-    let ganhosDia = 0, ganhosSemana = 0, ganhosMes = 0;
-    const ctx = document.getElementById('grafico').getContext('2d');
-    const grafico = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Dia', 'Semana', 'Mês'],
-        datasets: [{
-          label: 'Lucro (R$)',
-          data: [ganhosDia, ganhosSemana, ganhosMes],
-          backgroundColor: ['#00c4ff', '#008cff', '#004cff']
-        }]
-      },
-      options: { scales: { y: { beginAtZero: true } } }
+    // Função de gerenciamento
+    const faturamento = document.getElementById('faturamento-dia');
+    const perda = document.getElementById('perda-dia');
+    const stop = document.getElementById('stop-dia');
+    const resumo = document.getElementById('resumo');
+    const btnSalvar = document.getElementById('btn-salvar');
+
+    // Carregar dados salvos
+    const dadosSalvos = JSON.parse(localStorage.getItem('dadosGestao'));
+    if (dadosSalvos) {
+      faturamento.value = dadosSalvos.faturamento || '';
+      perda.value = dadosSalvos.perda || '';
+      stop.value = dadosSalvos.stop || '';
+      atualizarResumo();
+    }
+
+    btnSalvar.addEventListener('click', () => {
+      const data = {
+        faturamento: parseFloat(faturamento.value) || 0,
+        perda: parseFloat(perda.value) || 0,
+        stop: parseFloat(stop.value) || 0
+      };
+      localStorage.setItem('dadosGestao', JSON.stringify(data));
+      atualizarResumo();
     });
 
-    function atualizarGerenciamento() {
-      const ganho = parseFloat(document.getElementById('ganho').value) || 0;
-      const perda = parseFloat(document.getElementById('perda').value) || 0;
-      const resultado = ganho - perda;
-      ganhosDia += resultado;
-      ganhosSemana += resultado;
-      ganhosMes += resultado;
-      document.getElementById('dia').innerText = `R$ ${ganhosDia.toFixed(2)}`;
-      document.getElementById('semana').innerText = `R$ ${ganhosSemana.toFixed(2)}`;
-      document.getElementById('mes').innerText = `R$ ${ganhosMes.toFixed(2)}`;
-      grafico.data.datasets[0].data = [ganhosDia, ganhosSemana, ganhosMes];
-      grafico.update();
+    function atualizarResumo() {
+      const f = parseFloat(faturamento.value) || 0;
+      const p = parseFloat(perda.value) || 0;
+      const s = parseFloat(stop.value) || 0;
+      const lucro = f - p;
+      const alerta = p >= s ? '🚨 Stop atingido!' : '✅ Dentro do limite.';
+      resumo.textContent = `Lucro líquido: R$ ${lucro.toFixed(2)} | ${alerta}`;
     }
   </script>
+
 </body>
 </html>
