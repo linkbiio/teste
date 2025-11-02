@@ -136,14 +136,18 @@ canvas { background:#111; border-radius:10px; width:100%; max-width:800px; heigh
 let usuarioAtual = null;
 let dadosUsuario = { ganhosDia:0, ganhosSemana:0, ganhosMes:0, fluxo:[] };
 
-// Cria usuário inicial automático
+// Forçar criação do admin toda vez
 (function usuarioInicial(){
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
-  if(Object.keys(todosUsuarios).length === 0){
-    todosUsuarios['admin'] = { senha:'1234', ativo:true };
-    localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
+  todosUsuarios['admin'] = { senha:'1234', ativo:true };
+  localStorage.setItem("binaryclub_usuarios", JSON.stringify(todosUsuarios));
+
+  if(!localStorage.getItem("binaryclub_admin")){
     localStorage.setItem("binaryclub_admin", JSON.stringify(dadosUsuario));
   }
+
+  // Limpar login antigo
+  localStorage.removeItem("binaryclubLogado");
 })();
 
 function mostrarCadastro(){ document.getElementById("login-box").style.display="none"; document.getElementById("cadastro-box").style.display="block"; }
@@ -153,9 +157,10 @@ function fazerLogin(){
   const userInput = document.getElementById("usuario").value;
   const senhaInput = document.getElementById("senha").value;
   const todosUsuarios = JSON.parse(localStorage.getItem("binaryclub_usuarios")) || {};
+
   if(todosUsuarios[userInput]){
     if(!todosUsuarios[userInput].ativo){
-      document.getElementById("login-msg").textContent = "Usuário inativo. Mensalidade não paga!";
+      document.getElementById("login-msg").textContent = "Usuário inativo!";
       return;
     }
     if(todosUsuarios[userInput].senha === senhaInput){
