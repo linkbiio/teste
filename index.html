@@ -61,7 +61,7 @@ canvas { background:#111; border-radius:10px; width:100%; max-width:800px; heigh
 <div class="container">
   <section id="videos" class="section active">
     <h2>📚 Vídeo Aulas</h2>
-    <p>Conteúdo de vídeo aqui...</p>
+    <p>Aqui você pode colocar os vídeos do YouTube ou seu conteúdo exclusivo.</p>
   </section>
 
   <section id="gerenciamento" class="section">
@@ -192,7 +192,6 @@ function atualizarUI(){
   document.getElementById('mes').innerText=`R$ ${dadosUsuario.ganhosMes.toFixed(2)}`;
   grafico.data.datasets[0].data=[dadosUsuario.ganhosDia,dadosUsuario.ganhosSemana,dadosUsuario.ganhosMes];
   grafico.update();
-  // tabela fluxo
   const tbody=document.getElementById("tabelaFluxo").querySelector("tbody");
   tbody.innerHTML="";
   dadosUsuario.fluxo.forEach(l=>{
@@ -200,7 +199,6 @@ function atualizarUI(){
     tr.innerHTML=`<td>${l.data}</td><td>R$ ${l.ganho.toFixed(2)}</td><td>R$ ${l.perda.toFixed(2)}</td><td>R$ ${l.resultado.toFixed(2)}</td>`;
     tbody.appendChild(tr);
   });
-  // usuário
   document.getElementById("userNome").textContent=usuarioAtual;
   const todos=JSON.parse(localStorage.getItem("binaryclub_usuarios"))||{};
   document.getElementById("userStatus").textContent=todos[usuarioAtual].ativo?"Ativo":"Inativo";
