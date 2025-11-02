@@ -1,89 +1,92 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Binaryclub — Login / Registrar</title>
-  <style>
-    :root{--bg:#0b0b0f;--card:#0f0f14;--accent:#c59b00;--muted:#bfbfbf}
-    *{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
-    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#050507,#0b0b0f);color:#fff;padding:20px}
-    .wrap{width:100%;max-width:420px}
-    .card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 40px rgba(0,0,0,0.6)}
-    h1{margin:0 0 8px;font-size:1.4rem}
-    p.small{margin:0;color:var(--muted);font-size:0.9rem}
-    label{display:block;margin-top:12px;font-size:0.9rem;color:var(--muted)}
-    input[type="text"],input[type="password"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
-    button{margin-top:14px;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#111;font-weight:700;cursor:pointer}
-    .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
-    .msg{margin-top:10px;font-size:0.95rem}
-    @media (max-width:480px){ .wrap{padding:8px} }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Binaryclub — Login / Registrar</title>
+<style>
+  :root{--bg:#0b0b0f;--card:#0f0f14;--accent:#c59b00;--muted:#bfbfbf}
+  *{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#050507,#0b0b0f);color:#fff;padding:20px}
+  .wrap{width:100%;max-width:420px}
+  .card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+  h1{margin:0 0 8px;font-size:1.4rem}
+  p.small{margin:0;color:var(--muted);font-size:0.9rem}
+  label{display:block;margin-top:12px;font-size:0.9rem;color:var(--muted)}
+  input[type="text"],input[type="password"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+  button{margin-top:14px;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#111;font-weight:700;cursor:pointer;transition:0.2s}
+  button:hover{opacity:0.85}
+  .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
+  .msg{margin-top:10px;font-size:0.95rem;min-height:18px}
+  @media (max-width:480px){ .wrap{padding:8px} }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffd86b);display:flex;align-items:center;justify-content:center;color:#111;font-weight:800">BC</div>
-        <div>
-          <h1>Binaryclub</h1>
-          <p class="small">Faça login ou crie sua conta no maior club de trader do Brasil</p>
-        </div>
+<div class="wrap">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffd86b);display:flex;align-items:center;justify-content:center;color:#111;font-weight:800">BC</div>
+      <div>
+        <h1>Binaryclub</h1>
+        <p class="small">Faça login ou crie sua conta no maior club de trader do Brasil</p>
       </div>
+    </div>
 
-      <!-- LOGIN -->
-      <div id="loginView">
-        <label for="loginUser">Usuário</label>
-        <input id="loginUser" type="text" placeholder="Seu usuário" autocomplete="username">
+    <!-- LOGIN -->
+    <div id="loginView">
+      <label for="loginUser">Usuário</label>
+      <input id="loginUser" type="text" placeholder="Seu usuário" autocomplete="username">
 
-        <label for="loginPass">Senha</label>
-        <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
+      <label for="loginPass">Senha</label>
+      <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
 
-        <button id="btnLogin">Entrar</button>
+      <button id="btnLogin">Entrar</button>
 
-        <div class="msg" id="loginMsg"></div>
+      <div class="msg" id="loginMsg"></div>
 
-        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-          <span class="small">Não tem conta?</span>
-          <a id="showRegister" class="link">Criar nova conta</a>
-        </div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <span class="small">Não tem conta?</span>
+        <a id="showRegister" class="link">Criar nova conta</a>
       </div>
+    </div>
 
-      <!-- REGISTER -->
-      <div id="registerView" style="display:none">
-        <label for="regUser">Escolha um usuário</label>
-        <input id="regUser" type="text" placeholder="Ex: joao123">
+    <!-- REGISTER -->
+    <div id="registerView" style="display:none">
+      <label for="regUser">Escolha um usuário</label>
+      <input id="regUser" type="text" placeholder="Ex: joao123">
 
-        <label for="regPass">Escolha uma senha</label>
-        <input id="regPass" type="password" placeholder="Sua senha">
+      <label for="regPass">Escolha uma senha</label>
+      <input id="regPass" type="password" placeholder="Sua senha">
 
-        <label for="regPass2">Repita a senha</label>
-        <input id="regPass2" type="password" placeholder="Repita a senha">
+      <label for="regPass2">Repita a senha</label>
+      <input id="regPass2" type="password" placeholder="Repita a senha">
 
-        <button id="btnRegister">Criar conta</button>
+      <button id="btnRegister">Criar conta</button>
 
-        <div class="msg" id="regMsg"></div>
+      <div class="msg" id="regMsg"></div>
 
-        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-          <span class="small">Já tem conta?</span>
-          <a id="showLogin" class="link">Entrar</a>
-        </div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <span class="small">Já tem conta?</span>
+        <a id="showLogin" class="link">Entrar</a>
       </div>
     </div>
   </div>
+</div>
 
 <script>
-/* CONFIG: coloque aqui o link de redirecionamento */
 const CONFIG = {
-  redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" // <- altere para o site que deseja redirecionar
+  redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/"
 };
 
-/* STORAGE & UTIL */
 const STORAGE_KEY = "binaryclub_users_v1";
-function loadUsers(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
+
+function loadUsers(){ 
+  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } 
+  catch(e){ return []; } 
+}
+
 function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
 
-/* Hash de senha com SHA-256 (Web Crypto) - retorna hex string */
 async function hashPassword(password){
   const enc = new TextEncoder();
   const data = enc.encode(password);
@@ -91,7 +94,10 @@ async function hashPassword(password){
   return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-function findUser(username){ const users = loadUsers(); return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); }
+function findUser(username){ 
+  const users = loadUsers(); 
+  return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); 
+}
 
 document.addEventListener('DOMContentLoaded', ()=> {
   const loginView = document.getElementById('loginView');
@@ -106,7 +112,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
   showRegister.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; loginView.style.display='none'; registerView.style.display='block'; });
   showLogin.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; registerView.style.display='none'; loginView.style.display='block'; });
 
-  // criar conta
   btnRegister.addEventListener('click', async ()=>{
     regMsg.style.color = '#ffb86b';
     const username = document.getElementById('regUser').value.trim();
@@ -120,12 +125,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const users = loadUsers();
     users.push({ username, passwordHash: hashed, createdAt: new Date().toISOString() });
     saveUsers(users);
-    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
-    document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
+    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Faça login.';
+    document.getElementById('regUser').value=''; 
+    document.getElementById('regPass').value=''; 
+    document.getElementById('regPass2').value='';
     setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
   });
 
-  // login
   btnLogin.addEventListener('click', async ()=>{
     loginMsg.style.color = '#ffb86b';
     const username = document.getElementById('loginUser').value.trim();
@@ -136,10 +142,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
     loginMsg.style.color = '#ffb86b'; loginMsg.textContent = 'Verificando...';
     const hashed = await hashPassword(pass);
     if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
-    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem sucedido — redirecionando...';
+    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem-sucedido — redirecionando...';
     setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
-
 });
 </script>
 </body>
