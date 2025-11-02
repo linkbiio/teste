@@ -1,92 +1,207 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Binaryclub — Login / Registrar</title>
-<style>
-  :root{--bg:#0b0b0f;--card:#0f0f14;--accent:#c59b00;--muted:#bfbfbf}
-  *{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#050507,#0b0b0f);color:#fff;padding:20px}
-  .wrap{width:100%;max-width:420px}
-  .card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 40px rgba(0,0,0,0.6)}
-  h1{margin:0 0 8px;font-size:1.4rem}
-  p.small{margin:0;color:var(--muted);font-size:0.9rem}
-  label{display:block;margin-top:12px;font-size:0.9rem;color:var(--muted)}
-  input[type="text"],input[type="password"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
-  button{margin-top:14px;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#111;font-weight:700;cursor:pointer;transition:0.2s}
-  button:hover{opacity:0.85}
-  .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
-  .msg{margin-top:10px;font-size:0.95rem;min-height:18px}
-  @media (max-width:480px){ .wrap{padding:8px} }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Binaryclub — Login / Registrar</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    :root{
+      --bg:#0b0b0f;
+      --card:#0f0f14;
+      --accent:#c59b00;
+      --muted:#bfbfbf;
+      --whatsapp:#25D366;
+    }
+
+    *{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: url('https://images.unsplash.com/photo-1612832021238-76a33baf4266?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NzdlMnwwfDF8c2VhcmNofDN8fGRheSUyMHRyYWRlcmluZ3xlbnwwfHx8fDE2OTg4MzM3NjB8&ixlib=rb-4.0.3&q=80&w=1080') no-repeat center center/cover;
+      color:#fff;
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Overlay escuro para contraste */
+    body::before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,0.6);
+      z-index:0;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:420px;
+      position:relative;
+      z-index:1;
+    }
+
+    .card{
+      background:var(--card);
+      padding:30px 25px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:0 12px 50px rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+    }
+
+    h1{margin:0 0 8px;font-size:1.6rem}
+    p.small{margin:0;color:var(--muted);font-size:0.9rem}
+
+    label{display:block;margin-top:12px;font-size:0.9rem;color:var(--muted)}
+    input[type="text"],input[type="password"]{
+      width:100%;
+      padding:12px;
+      margin-top:6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.06);
+      background:rgba(255,255,255,0.05);
+      color:#fff;
+      transition:0.3s;
+    }
+    input:focus{border-color:var(--accent);outline:none;background:rgba(255,255,255,0.1)}
+
+    button{
+      margin-top:16px;
+      width:100%;
+      padding:12px;
+      border-radius:12px;
+      border:none;
+      background:var(--accent);
+      color:#111;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.3s;
+    }
+    button:hover{background:#ffd86b;}
+
+    .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
+    .msg{margin-top:10px;font-size:0.95rem}
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:15px;
+    }
+    .logo-icon{
+      width:60px;
+      height:60px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#ffd86b);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#111;
+      font-weight:800;
+      font-size:1.2rem;
+    }
+
+    /* Botão flutuante WhatsApp */
+    .whatsapp-btn{
+      position:fixed;
+      bottom:25px;
+      right:25px;
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:var(--whatsapp);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 6px 20px rgba(0,0,0,0.4);
+      cursor:pointer;
+      transition:0.3s;
+      z-index:2;
+    }
+    .whatsapp-btn:hover{transform:scale(1.1);}
+
+    @media (max-width:480px){ 
+      .wrap{padding:8px} 
+      .card{padding:20px 15px;}
+      .logo-icon{width:50px;height:50px;font-size:1rem;}
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-      <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffd86b);display:flex;align-items:center;justify-content:center;color:#111;font-weight:800">BC</div>
-      <div>
-        <h1>Binaryclub</h1>
-        <p class="small">Faça login ou crie sua conta no maior club de trader do Brasil</p>
+  <div class="wrap">
+    <div class="card">
+      <div class="logo">
+        <div class="logo-icon">BC</div>
+        <div>
+          <h1>Binaryclub</h1>
+          <p class="small">Faça login ou crie sua conta no maior club de trader do Brasil</p>
+        </div>
       </div>
-    </div>
 
-    <!-- LOGIN -->
-    <div id="loginView">
-      <label for="loginUser">Usuário</label>
-      <input id="loginUser" type="text" placeholder="Seu usuário" autocomplete="username">
+      <!-- LOGIN -->
+      <div id="loginView">
+        <label for="loginUser">Usuário</label>
+        <input id="loginUser" type="text" placeholder="Seu usuário" autocomplete="username">
 
-      <label for="loginPass">Senha</label>
-      <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
+        <label for="loginPass">Senha</label>
+        <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
 
-      <button id="btnLogin">Entrar</button>
+        <button id="btnLogin">Entrar</button>
 
-      <div class="msg" id="loginMsg"></div>
+        <div class="msg" id="loginMsg"></div>
 
-      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-        <span class="small">Não tem conta?</span>
-        <a id="showRegister" class="link">Criar nova conta</a>
+        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <span class="small">Não tem conta?</span>
+          <a id="showRegister" class="link">Criar nova conta</a>
+        </div>
       </div>
-    </div>
 
-    <!-- REGISTER -->
-    <div id="registerView" style="display:none">
-      <label for="regUser">Escolha um usuário</label>
-      <input id="regUser" type="text" placeholder="Ex: joao123">
+      <!-- REGISTER -->
+      <div id="registerView" style="display:none">
+        <label for="regUser">Escolha um usuário</label>
+        <input id="regUser" type="text" placeholder="Ex: joao123">
 
-      <label for="regPass">Escolha uma senha</label>
-      <input id="regPass" type="password" placeholder="Sua senha">
+        <label for="regPass">Escolha uma senha</label>
+        <input id="regPass" type="password" placeholder="Sua senha">
 
-      <label for="regPass2">Repita a senha</label>
-      <input id="regPass2" type="password" placeholder="Repita a senha">
+        <label for="regPass2">Repita a senha</label>
+        <input id="regPass2" type="password" placeholder="Repita a senha">
 
-      <button id="btnRegister">Criar conta</button>
+        <button id="btnRegister">Criar conta</button>
 
-      <div class="msg" id="regMsg"></div>
+        <div class="msg" id="regMsg"></div>
 
-      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-        <span class="small">Já tem conta?</span>
-        <a id="showLogin" class="link">Entrar</a>
+        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <span class="small">Já tem conta?</span>
+          <a id="showLogin" class="link">Entrar</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- WhatsApp flutuante -->
+  <a href="https://wa.me/5511999999999" target="_blank" class="whatsapp-btn">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="32" height="32">
+  </a>
 
 <script>
+/* CONFIG: coloque aqui o link de redirecionamento */
 const CONFIG = {
-  redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/"
+  redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" // <- altere para o site que deseja redirecionar
 };
 
+/* STORAGE & UTIL */
 const STORAGE_KEY = "binaryclub_users_v1";
-
-function loadUsers(){ 
-  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } 
-  catch(e){ return []; } 
-}
-
+function loadUsers(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
 function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
 
+/* Hash de senha com SHA-256 (Web Crypto) - retorna hex string */
 async function hashPassword(password){
   const enc = new TextEncoder();
   const data = enc.encode(password);
@@ -94,10 +209,7 @@ async function hashPassword(password){
   return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-function findUser(username){ 
-  const users = loadUsers(); 
-  return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); 
-}
+function findUser(username){ const users = loadUsers(); return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); }
 
 document.addEventListener('DOMContentLoaded', ()=> {
   const loginView = document.getElementById('loginView');
@@ -112,6 +224,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
   showRegister.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; loginView.style.display='none'; registerView.style.display='block'; });
   showLogin.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; registerView.style.display='none'; loginView.style.display='block'; });
 
+  // criar conta
   btnRegister.addEventListener('click', async ()=>{
     regMsg.style.color = '#ffb86b';
     const username = document.getElementById('regUser').value.trim();
@@ -125,13 +238,12 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const users = loadUsers();
     users.push({ username, passwordHash: hashed, createdAt: new Date().toISOString() });
     saveUsers(users);
-    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Faça login.';
-    document.getElementById('regUser').value=''; 
-    document.getElementById('regPass').value=''; 
-    document.getElementById('regPass2').value='';
+    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
+    document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
     setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
   });
 
+  // login
   btnLogin.addEventListener('click', async ()=>{
     loginMsg.style.color = '#ffb86b';
     const username = document.getElementById('loginUser').value.trim();
@@ -142,7 +254,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     loginMsg.style.color = '#ffb86b'; loginMsg.textContent = 'Verificando...';
     const hashed = await hashPassword(pass);
     if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
-    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem-sucedido — redirecionando...';
+    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem sucedido — redirecionando...';
     setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
 });
