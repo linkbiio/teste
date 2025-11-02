@@ -13,7 +13,7 @@
     h1{margin:0 0 8px;font-size:1.4rem}
     p.small{margin:0;color:var(--muted);font-size:0.9rem}
     label{display:block;margin-top:12px;font-size:0.9rem;color:var(--muted)}
-    input[type="text"],input[type="password"],input[type="url"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+    input[type="text"],input[type="password"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
     button{margin-top:14px;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#111;font-weight:700;cursor:pointer}
     .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
     .row{display:flex;gap:8px}
@@ -73,56 +73,31 @@
         </div>
       </div>
 
-      <!-- Configuração de redirecionamento (visível por padrão aqui pra facilitar) -->
-      <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,0.03);padding-top:12px;">
-        <label for="redirectUrl">Link para onde o usuário será redirecionado após login</label>
-        <input id="redirectUrl" type="url" placeholder="https://seusite.com/area" />
-        <p class="small" style="margin-top:8px">Altere e clique em <strong>Salvar</strong>. Isto é salvo localmente e usado no redirecionamento.</p>
-        <div class="row">
-          <button id="saveRedirect">Salvar</button>
-          <button id="resetData" style="background:#2b2b2b;color:#fff">Resetar usuários (apaga tudo)</button>
-        </div>
-        <div id="settingsMsg" class="msg"></div>
-      </div>
-
-      <footer>Prototipo: para produção é necessário backend (hash seguro, https, gateway de pagamento).</footer>
+      <footer>Prototipo: para produção é necessário backend seguro e integração de pagamento.</footer>
     </div>
   </div>
 
 <script>
-/* CONFIG: altere aqui se quiser forçar um default */
+/* CONFIG: coloque aqui o link de redirecionamento */
 const CONFIG = {
-  defaultRedirectURL: "https://example.com/area-restrita" // troque para onde quer redirecionar
+  redirectURL: "https://example.com/area-restrita" // <- altere para o site que deseja redirecionar
 };
 
 /* STORAGE & UTIL */
 const STORAGE_KEY = "binaryclub_users_v1";
-const SETTINGS_KEY = "binaryclub_settings_v1";
-
-function loadUsers(){
-  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
-}
+function loadUsers(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
 function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
-
-function loadSettings(){
-  try{ const raw = localStorage.getItem(SETTINGS_KEY); return raw ? JSON.parse(raw) : { redirectUrl: CONFIG.defaultRedirectURL }; } catch(e){ return { redirectUrl: CONFIG.defaultRedirectURL }; }
-}
-function saveSettings(obj){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj)); }
 
 /* Hash de senha com SHA-256 (Web Crypto) - retorna hex string */
 async function hashPassword(password){
   const enc = new TextEncoder();
   const data = enc.encode(password);
   const hash = await crypto.subtle.digest('SHA-256', data);
-  // converter para hex
-  const arr = Array.from(new Uint8Array(hash));
-  return arr.map(b => b.toString(16).padStart(2,'0')).join('');
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-/* UTIL: busca usuario (case-insensitive) */
 function findUser(username){ const users = loadUsers(); return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); }
 
-/* UI wiring */
 document.addEventListener('DOMContentLoaded', ()=> {
   const loginView = document.getElementById('loginView');
   const registerView = document.getElementById('registerView');
@@ -132,23 +107,9 @@ document.addEventListener('DOMContentLoaded', ()=> {
   const btnLogin = document.getElementById('btnLogin');
   const regMsg = document.getElementById('regMsg');
   const loginMsg = document.getElementById('loginMsg');
-  const redirectInput = document.getElementById('redirectUrl');
-  const saveRedirect = document.getElementById('saveRedirect');
-  const settingsMsg = document.getElementById('settingsMsg');
-  const resetData = document.getElementById('resetData');
 
-  // carregar redirect salvo
-  const settings = loadSettings();
-  redirectInput.value = settings.redirectUrl || CONFIG.defaultRedirectURL;
-
-  showRegister.addEventListener('click', ()=> {
-    loginMsg.textContent = ''; regMsg.textContent = '';
-    loginView.style.display='none'; registerView.style.display='block';
-  });
-  showLogin.addEventListener('click', ()=> {
-    loginMsg.textContent = ''; regMsg.textContent = '';
-    registerView.style.display='none'; loginView.style.display='block';
-  });
+  showRegister.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; loginView.style.display='none'; registerView.style.display='block'; });
+  showLogin.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; registerView.style.display='none'; loginView.style.display='block'; });
 
   // criar conta
   btnRegister.addEventListener('click', async ()=>{
@@ -158,15 +119,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const pass2 = document.getElementById('regPass2').value;
     if(!username || !pass){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Preencha usuário e senha.'; return; }
     if(pass !== pass2){ regMsg.style.color='#ff6b6b'; regMsg.textContent='As senhas não conferem.'; return; }
-    if(findUser(username)){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Usuário já existe. Escolha outro.'; return; }
-    // hash e salvar
+    if(findUser(username)){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Usuário já existe.'; return; }
     regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Criando conta...';
     const hashed = await hashPassword(pass);
     const users = loadUsers();
     users.push({ username, passwordHash: hashed, createdAt: new Date().toISOString() });
     saveUsers(users);
     regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
-    // limpar campos e mostrar login
     document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
     setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
   });
@@ -183,35 +142,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
     const hashed = await hashPassword(pass);
     if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
     loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem sucedido — redirecionando...';
-    // obter redirect (salvo nas configurações locais)
-    const set = loadSettings();
-    const redirectUrl = set.redirectUrl || CONFIG.defaultRedirectURL;
-    // redirect (usar timeout curto para mostrar mensagem)
-    setTimeout(()=> { window.location.href = redirectUrl; }, 700);
+    setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
 
-  // salvar redirect
-  saveRedirect.addEventListener('click', ()=>{
-    const url = redirectInput.value.trim();
-    if(!url){ settingsMsg.style.color='#ff6b6b'; settingsMsg.textContent = 'Coloque um URL válido.'; return; }
-    saveSettings({ redirectUrl: url });
-    settingsMsg.style.color='#84ff8a'; settingsMsg.textContent = 'Link salvo.';
-    setTimeout(()=> { settingsMsg.textContent=''; }, 2500);
-  });
-
-  // reset data (apagar todas as contas)
-  resetData.addEventListener('click', ()=>{
-    if(!confirm('Atenção: isso apagará TODOS os usuários salvos localmente. Deseja continuar?')) return;
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(SETTINGS_KEY);
-    // recarregar defaults
-    redirectInput.value = CONFIG.defaultRedirectURL;
-    document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
-    document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
-    alert('Dados resetados.');
-  });
-
-}); // DOM ready
+});
 </script>
 </body>
 </html>
