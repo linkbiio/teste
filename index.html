@@ -3,85 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Binaryclub — Login</title>
+  <title>Binaryclub — Login / Registrar</title>
   <style>
-    :root{
-      --bg:#0b0b0f;
-      --card:#0f0f14;
-      --accent:#c59b00;
-      --muted:#bfbfbf;
-      --glass: rgba(255,255,255,0.03);
-    }
+    :root{--bg:#0b0b0f;--card:#0f0f14;--accent:#c59b00;--muted:#bfbfbf}
     *{box-sizing:border-box;font-family:Inter, system-ui, Arial, sans-serif}
-    body{
-      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-      background: linear-gradient(180deg,#050507 0%, #0b0b0f 60%);
-      color:#fff;
-      padding:20px;
-    }
-    .container{
-      width:100%; max-width:920px; display:grid; grid-template-columns:420px 1fr; gap:24px;
-      align-items:start;
-    }
-    .brand {
-      background: linear-gradient(90deg, rgba(197,155,0,0.12), transparent);
-      border:1px solid rgba(197,155,0,0.12);
-      padding:28px; border-radius:14px; box-shadow:0 6px 30px rgba(0,0,0,0.6);
-    }
-    .logo {
-      display:flex; gap:14px; align-items:center; margin-bottom:18px;
-    }
-    .logo .badge{
-      width:72px;height:72px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#ffd86b);
-      display:flex;align-items:center;justify-content:center;font-weight:800;color:#111;font-size:22px;
-      box-shadow: 0 6px 20px rgba(197,155,0,0.12);
-    }
-    .logo h1{margin:0;font-size:1.6rem}
-    .card{
-      background:var(--card); padding:20px; border-radius:12px; border:1px solid var(--glass);
-    }
+    body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#050507,#0b0b0f);color:#fff;padding:20px}
+    .wrap{width:100%;max-width:420px}
+    .card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+    h1{margin:0 0 8px;font-size:1.4rem}
+    p.small{margin:0;color:var(--muted);font-size:0.9rem}
     label{display:block;margin-top:12px;font-size:0.9rem;color:var(--muted)}
-    input[type="text"], input[type="password"], input[type="date"]{
-      width:100%;padding:12px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);
-      background:transparent;color:#fff;
-    }
-    button{
-      margin-top:14px;padding:12px 16px;border-radius:10px;border:none;background:var(--accent);color:#111;
-      font-weight:700; cursor:pointer;
-    }
-    .link{color:var(--accent); cursor:pointer; text-decoration:underline; font-weight:600}
+    input[type="text"],input[type="password"],input[type="url"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+    button{margin-top:14px;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#111;font-weight:700;cursor:pointer}
+    .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
+    .row{display:flex;gap:8px}
     .muted{color:var(--muted);font-size:0.9rem}
-    .admin-area{display:none}
-    .users-table{width:100%;border-collapse:collapse;margin-top:12px}
-    .users-table th,.users-table td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.9rem}
-    .status-paid{color:#84ff8a;font-weight:700}
-    .status-unpaid{color:#ff6b6b;font-weight:700}
-    .small{font-size:0.85rem;color:var(--muted)}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-    .danger{background:#2f1a1a}
-    .success{background:#173217}
-    @media (max-width:860px){ .container{grid-template-columns:1fr; } }
+    .msg{margin-top:10px;font-size:0.95rem}
+    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:0.8rem}
+    @media (max-width:480px){ .wrap{padding:8px} }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Left: Branding + Login/Register -->
-    <div class="brand card">
-      <div class="logo">
-        <div class="badge">BC</div>
+  <div class="wrap">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffd86b);display:flex;align-items:center;justify-content:center;color:#111;font-weight:800">BC</div>
         <div>
           <h1>Binaryclub</h1>
-          <div class="muted">Área de membros — Entre com seu usuário</div>
+          <p class="small">Faça login ou crie sua conta — acesso redirecionará para outro site</p>
         </div>
       </div>
 
-      <!-- Login form -->
-      <div id="loginCard" class="card" style="background:transparent;border:none;padding:0;">
-        <div class="topbar">
-          <strong>Entrar</strong>
-          <span class="small">Prototipo — não use em produção</span>
-        </div>
-
+      <!-- LOGIN -->
+      <div id="loginView">
         <label for="loginUser">Usuário</label>
         <input id="loginUser" type="text" placeholder="Seu usuário" autocomplete="username">
 
@@ -90,429 +44,173 @@
 
         <button id="btnLogin">Entrar e redirecionar</button>
 
-        <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
+        <div class="msg" id="loginMsg"></div>
+
+        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
           <span class="small">Não tem conta?</span>
-          <a id="registerRedirect" class="link">Clique aqui</a>
+          <a id="showRegister" class="link">Criar nova conta</a>
         </div>
-
-        <div id="loginMsg" class="small" style="margin-top:10px;color:#ffb86b;"></div>
       </div>
 
-      <!-- Register (just creates a local account) -->
-      <div id="registerCard" class="card" style="margin-top:18px;display:none;">
-        <strong>Registrar nova conta</strong>
-        <label for="regUser">Usuário</label>
-        <input id="regUser" type="text" placeholder="Escolha um usuário">
-        <label for="regPass">Senha</label>
-        <input id="regPass" type="password" placeholder="Escolha uma senha">
+      <!-- REGISTER -->
+      <div id="registerView" style="display:none">
+        <label for="regUser">Escolha um usuário</label>
+        <input id="regUser" type="text" placeholder="Ex: joao123">
+
+        <label for="regPass">Escolha uma senha</label>
+        <input id="regPass" type="password" placeholder="Sua senha">
+
+        <label for="regPass2">Repita a senha</label>
+        <input id="regPass2" type="password" placeholder="Repita a senha">
+
         <button id="btnRegister">Criar conta</button>
-        <div style="margin-top:8px" class="small">Ao se registrar, você ficará marcado como <strong>não pago</strong> até receber a liberação.</div>
-        <div id="regMsg" class="small" style="margin-top:8px;color:#84ff8a"></div>
-      </div>
 
-      <div style="margin-top:18px" class="small">
-        <strong>Nota:</strong> este protótipo usa armazenamento local no navegador (localStorage). Para **controle real de assinaturas** use um servidor/backend.
-      </div>
-    </div>
+        <div class="msg" id="regMsg"></div>
 
-    <!-- Right: Painel / Área após login -->
-    <div>
-      <div id="afterLogin" class="card" style="display:none;">
-        <div class="topbar">
-          <div>
-            <strong id="welcomeUser">Bem-vindo</strong>
-            <div class="small" id="paidInfo">Status: —</div>
-          </div>
-          <div>
-            <button id="btnLogout" class="danger">Sair</button>
-          </div>
-        </div>
-
-        <div id="memberContent">
-          <p class="small">Área do membro. Se estiver liberado (pagou), será redirecionado automaticamente quando entrar.</p>
-          <div style="margin-top:12px">
-            <button id="goNow" class="success">Ir para o site (manual)</button>
-            <button id="openAdmin" style="margin-left:8px">Painel Admin</button>
-          </div>
+        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <span class="small">Já tem conta?</span>
+          <a id="showLogin" class="link">Entrar</a>
         </div>
       </div>
 
-      <!-- Admin area -->
-      <div id="adminArea" class="card admin-area">
-        <div class="topbar">
-          <strong>Painel ADMIN</strong>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span class="small">Logado como admin</span>
-            <button id="closeAdmin" style="margin-left:8px">Fechar</button>
-          </div>
+      <!-- Configuração de redirecionamento (visível por padrão aqui pra facilitar) -->
+      <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,0.03);padding-top:12px;">
+        <label for="redirectUrl">Link para onde o usuário será redirecionado após login</label>
+        <input id="redirectUrl" type="url" placeholder="https://seusite.com/area" />
+        <p class="small" style="margin-top:8px">Altere e clique em <strong>Salvar</strong>. Isto é salvo localmente e usado no redirecionamento.</p>
+        <div class="row">
+          <button id="saveRedirect">Salvar</button>
+          <button id="resetData" style="background:#2b2b2b;color:#fff">Resetar usuários (apaga tudo)</button>
         </div>
-
-        <div style="display:flex;gap:12px;flex-wrap:wrap">
-          <div style="flex:1;min-width:220px">
-            <label>Definir link de redirecionamento (quando usuário entrar)</label>
-            <input id="redirectUrl" type="text" placeholder="https://seusite.com/area-restrita">
-            <label style="margin-top:8px">Link de pagamento (página externa)</label>
-            <input id="paymentUrl" type="text" placeholder="https://pagamento.exemplo/">
-            <button id="saveSettings">Salvar configurações</button>
-            <div id="settingsMsg" class="small" style="margin-top:8px;color:var(--muted)"></div>
-          </div>
-
-          <div style="flex:1;min-width:260px">
-            <strong>Marcar pagamento</strong>
-            <label>Usuário</label>
-            <select id="selectUserPay"></select>
-            <label>Data até</label>
-            <input id="paidUntil" type="date">
-            <button id="markPaid">Marcar como pago até</button>
-            <div style="margin-top:8px" class="small">Ou marque como não pago clicando no X na lista de usuários.</div>
-          </div>
-        </div>
-
-        <table class="users-table" id="usersTable" style="margin-top:14px">
-          <thead>
-            <tr><th>Usuário</th><th>Pago até</th><th>Status</th><th>Ações</th></tr>
-          </thead>
-          <tbody id="usersBody"></tbody>
-        </table>
-
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-          <button id="exportBtn">Exportar dados (JSON)</button>
-          <button id="importBtn">Importar dados (colar JSON)</button>
-          <button id="resetBtn" class="danger">Resetar tudo (apagar)</button>
-        </div>
+        <div id="settingsMsg" class="msg"></div>
       </div>
 
-      <!-- Login admin prompt -->
-      <div id="adminLoginPrompt" class="card" style="display:none;margin-top:12px;">
-        <strong>Entrar como ADMIN</strong>
-        <label>Usuário</label>
-        <input id="adminUser" type="text" placeholder="admin">
-        <label>Senha</label>
-        <input id="adminPass" type="password" placeholder="1234">
-        <button id="btnAdminLogin">Entrar como ADMIN</button>
-        <div id="adminMsg" class="small" style="margin-top:8px;color:#ffb86b"></div>
-      </div>
+      <footer>Prototipo: para produção é necessário backend (hash seguro, https, gateway de pagamento).</footer>
     </div>
   </div>
 
 <script>
-/*
-  Binaryclub — protótipo de login + painel admin para marcar pagamentos.
-  Configurações rápidas (edite aqui abaixo):
-*/
+/* CONFIG: altere aqui se quiser forçar um default */
 const CONFIG = {
-  // Link para "Não tem conta? Clique aqui" (registro externo) - altere para qualquer URL
-  registerRedirectURL: "https://example.com/cadastre-se",
-
-  // Link para pagar (quando usuário não pagou) - pode ser Hotmart/WhatsApp etc.
-  defaultPaymentURL: "https://example.com/pagar",
-
-  // Link para onde redirecionar após login (quando pago). Pode ser externo.
-  defaultRedirectURL: "https://example.com/area-restrita",
-
-  // Credenciais ADMIN padrão (mude para algo seguro em produção)
-  adminUser: "admin",
-  adminPass: "1234",
-
-  // Se quiser que após login de usuário pago faça o redirect automático, deixe true:
-  autoRedirectWhenPaid: true
+  defaultRedirectURL: "https://example.com/area-restrita" // troque para onde quer redirecionar
 };
 
-/* --- Utils: storage e manipulação de usuários --- */
-function getStorage(){
-  let raw = localStorage.getItem("binaryclub_data");
-  if(!raw){
-    // criar defaults: um admin não-consumidor (admins não são usuários normais)
-    const base = { users: [], settings: { redirectUrl: CONFIG.defaultRedirectURL, paymentUrl: CONFIG.defaultPaymentURL } };
-    localStorage.setItem("binaryclub_data", JSON.stringify(base));
-    return base;
-  }
-  try { return JSON.parse(raw); } catch(e){ return {users:[], settings:{redirectUrl:CONFIG.defaultRedirectURL, paymentUrl:CONFIG.defaultPaymentURL}}; }
-}
-function saveStorage(obj){ localStorage.setItem("binaryclub_data", JSON.stringify(obj)); }
+/* STORAGE & UTIL */
+const STORAGE_KEY = "binaryclub_users_v1";
+const SETTINGS_KEY = "binaryclub_settings_v1";
 
-/* Add user (username unique) */
-function addUser(username, password){
-  if(!username || !password) return {ok:false, msg:"Preencha usuário e senha"};
-  const st = getStorage();
-  if(st.users.find(u=>u.username.toLowerCase()===username.toLowerCase())) return {ok:false, msg:"Usuário já existe"};
-  st.users.push({ username, password, paidUntil: null, createdAt: new Date().toISOString() });
-  saveStorage(st);
-  return {ok:true};
+function loadUsers(){
+  try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
 }
+function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
 
-/* find user */
-function findUser(username){
-  const st = getStorage();
-  return st.users.find(u=>u.username.toLowerCase()===username.toLowerCase());
+function loadSettings(){
+  try{ const raw = localStorage.getItem(SETTINGS_KEY); return raw ? JSON.parse(raw) : { redirectUrl: CONFIG.defaultRedirectURL }; } catch(e){ return { redirectUrl: CONFIG.defaultRedirectURL }; }
+}
+function saveSettings(obj){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj)); }
+
+/* Hash de senha com SHA-256 (Web Crypto) - retorna hex string */
+async function hashPassword(password){
+  const enc = new TextEncoder();
+  const data = enc.encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  // converter para hex
+  const arr = Array.from(new Uint8Array(hash));
+  return arr.map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-/* set paidUntil date or clear */
-function setPaidUntil(username, isoDateOrNull){
-  const st = getStorage();
-  const u = st.users.find(x=>x.username.toLowerCase()===username.toLowerCase());
-  if(!u) return false;
-  u.paidUntil = isoDateOrNull ? (new Date(isoDateOrNull)).toISOString() : null;
-  saveStorage(st); return true;
-}
+/* UTIL: busca usuario (case-insensitive) */
+function findUser(username){ const users = loadUsers(); return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); }
 
-/* remove all data (use with cuidado) */
-function resetAll(){
-  localStorage.removeItem("binaryclub_data");
-  getStorage();
-}
-
-/* export/import */
-function exportJSON(){ return JSON.stringify(getStorage(), null, 2); }
-function importJSON(str){
-  try{
-    const parsed = JSON.parse(str);
-    if(typeof parsed !== 'object' || !Array.isArray(parsed.users)) return {ok:false,msg:'Formato inválido'};
-    localStorage.setItem("binaryclub_data", JSON.stringify(parsed));
-    return {ok:true};
-  }catch(e){ return {ok:false,msg:e.message}; }
-}
-
-/* check if paid: returns {paid:bool, paidUntil:date|null} */
-function checkPaid(userObj){
-  if(!userObj) return {paid:false, paidUntil:null};
-  if(!userObj.paidUntil) return {paid:false, paidUntil:null};
-  const until = new Date(userObj.paidUntil);
-  const now = new Date();
-  return { paid: until >= now, paidUntil: until };
-}
-
-/* --- UI wiring --- */
+/* UI wiring */
 document.addEventListener('DOMContentLoaded', ()=> {
-  // elements
-  const regLink = document.getElementById('registerRedirect');
-  const btnLogin = document.getElementById('btnLogin');
+  const loginView = document.getElementById('loginView');
+  const registerView = document.getElementById('registerView');
+  const showRegister = document.getElementById('showRegister');
+  const showLogin = document.getElementById('showLogin');
   const btnRegister = document.getElementById('btnRegister');
-  const loginMsg = document.getElementById('loginMsg');
+  const btnLogin = document.getElementById('btnLogin');
   const regMsg = document.getElementById('regMsg');
-  const loginCard = document.getElementById('loginCard');
-  const registerCard = document.getElementById('registerCard');
-  const adminLoginPrompt = document.getElementById('adminLoginPrompt');
-  const adminArea = document.getElementById('adminArea');
-  const afterLogin = document.getElementById('afterLogin');
-  const welcomeUser = document.getElementById('welcomeUser');
-  const paidInfo = document.getElementById('paidInfo');
-  const btnLogout = document.getElementById('btnLogout');
-  const openAdmin = document.getElementById('openAdmin');
-  const btnAdminLogin = document.getElementById('btnAdminLogin');
-  const adminMsg = document.getElementById('adminMsg');
-  const usersBody = document.getElementById('usersBody');
-  const selectUserPay = document.getElementById('selectUserPay');
-  const markPaid = document.getElementById('markPaid');
-  const paidUntil = document.getElementById('paidUntil');
-  const redirectUrl = document.getElementById('redirectUrl');
-  const paymentUrl = document.getElementById('paymentUrl');
-  const saveSettings = document.getElementById('saveSettings');
+  const loginMsg = document.getElementById('loginMsg');
+  const redirectInput = document.getElementById('redirectUrl');
+  const saveRedirect = document.getElementById('saveRedirect');
   const settingsMsg = document.getElementById('settingsMsg');
-  const goNow = document.getElementById('goNow');
-  const closeAdmin = document.getElementById('closeAdmin');
-  const exportBtn = document.getElementById('exportBtn');
-  const importBtn = document.getElementById('importBtn');
-  const resetBtn = document.getElementById('resetBtn');
+  const resetData = document.getElementById('resetData');
 
-  // initial link
-  regLink.addEventListener('click', ()=> window.location.href = CONFIG.registerRedirectURL );
+  // carregar redirect salvo
+  const settings = loadSettings();
+  redirectInput.value = settings.redirectUrl || CONFIG.defaultRedirectURL;
 
-  // load settings
-  const st = getStorage();
-  redirectUrl.value = st.settings?.redirectUrl || CONFIG.defaultRedirectURL;
-  paymentUrl.value = st.settings?.paymentUrl || CONFIG.defaultPaymentURL;
+  showRegister.addEventListener('click', ()=> {
+    loginMsg.textContent = ''; regMsg.textContent = '';
+    loginView.style.display='none'; registerView.style.display='block';
+  });
+  showLogin.addEventListener('click', ()=> {
+    loginMsg.textContent = ''; regMsg.textContent = '';
+    registerView.style.display='none'; loginView.style.display='block';
+  });
 
-  // register
-  btnRegister.addEventListener('click', ()=>{
-    const u = document.getElementById('regUser').value.trim();
-    const p = document.getElementById('regPass').value;
-    const res = addUser(u,p);
-    if(!res.ok){ regMsg.style.color='#ff6b6b'; regMsg.textContent = res.msg; return; }
-    regMsg.style.color='#84ff8a'; regMsg.textContent = 'Conta criada! Aguarde liberação (admin).';
-    document.getElementById('regUser').value=''; document.getElementById('regPass').value='';
-    refreshUsersTable();
+  // criar conta
+  btnRegister.addEventListener('click', async ()=>{
+    regMsg.style.color = '#ffb86b';
+    const username = document.getElementById('regUser').value.trim();
+    const pass = document.getElementById('regPass').value;
+    const pass2 = document.getElementById('regPass2').value;
+    if(!username || !pass){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Preencha usuário e senha.'; return; }
+    if(pass !== pass2){ regMsg.style.color='#ff6b6b'; regMsg.textContent='As senhas não conferem.'; return; }
+    if(findUser(username)){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Usuário já existe. Escolha outro.'; return; }
+    // hash e salvar
+    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Criando conta...';
+    const hashed = await hashPassword(pass);
+    const users = loadUsers();
+    users.push({ username, passwordHash: hashed, createdAt: new Date().toISOString() });
+    saveUsers(users);
+    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
+    // limpar campos e mostrar login
+    document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
+    setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
   });
 
   // login
-  btnLogin.addEventListener('click', ()=>{
-    const u = document.getElementById('loginUser').value.trim();
-    const p = document.getElementById('loginPass').value;
-    const user = findUser(u);
-    if(!user || user.password !== p){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent = 'Usuário ou senha inválidos.'; return; }
-    const paid = checkPaid(user);
-    // show afterLogin
-    showMemberArea(user, paid);
-    // redirect if paid and configured
-    const st = getStorage();
-    const rUrl = st.settings?.redirectUrl || CONFIG.defaultRedirectURL;
-    if(paid.paid && CONFIG.autoRedirectWhenPaid){
-      loginMsg.style.color='#84ff8a'; loginMsg.textContent = 'Login ok — você será redirecionado...';
-      setTimeout(()=> window.location.href = rUrl, 900);
-    } else {
-      loginMsg.style.color='#ffb86b';
-      loginMsg.textContent = 'Login ok. Acesso bloqueado: assinatura inativa.';
-    }
+  btnLogin.addEventListener('click', async ()=>{
+    loginMsg.style.color = '#ffb86b';
+    const username = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if(!username || !pass){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Preencha usuário e senha.'; return; }
+    const u = findUser(username);
+    if(!u){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Usuário não encontrado.'; return; }
+    loginMsg.style.color = '#ffb86b'; loginMsg.textContent = 'Verificando...';
+    const hashed = await hashPassword(pass);
+    if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
+    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem sucedido — redirecionando...';
+    // obter redirect (salvo nas configurações locais)
+    const set = loadSettings();
+    const redirectUrl = set.redirectUrl || CONFIG.defaultRedirectURL;
+    // redirect (usar timeout curto para mostrar mensagem)
+    setTimeout(()=> { window.location.href = redirectUrl; }, 700);
   });
 
-  // show member area
-  function showMemberArea(user, paid){
-    loginMsg.textContent = '';
-    registerCard.style.display='none';
-    loginCard.style.display='none';
-    adminLoginPrompt.style.display='none';
-    afterLogin.style.display='block';
-    welcomeUser.textContent = `Olá, ${user.username}`;
-    if(paid.paid){
-      paidInfo.innerHTML = `Status: <span class="status-paid">PAGO até ${paid.paidUntil.toLocaleDateString()}</span>`;
-    } else {
-      paidInfo.innerHTML = `Status: <span class="status-unpaid">NÃO pago</span> — <a id="payLink" class="link">Pagar agora</a>`;
-      document.getElementById('payLink').addEventListener('click', ()=> {
-        const st = getStorage();
-        window.open(st.settings?.paymentUrl || CONFIG.defaultPaymentURL, '_blank');
-      });
-    }
-    // show admin button only for admin user
-    if(user.username.toLowerCase() === CONFIG.adminUser.toLowerCase()){
-      document.getElementById('openAdmin').style.display='inline-block';
-    } else {
-      document.getElementById('openAdmin').style.display='inline-block'; // you can hide if prefer
-    }
-  }
+  // salvar redirect
+  saveRedirect.addEventListener('click', ()=>{
+    const url = redirectInput.value.trim();
+    if(!url){ settingsMsg.style.color='#ff6b6b'; settingsMsg.textContent = 'Coloque um URL válido.'; return; }
+    saveSettings({ redirectUrl: url });
+    settingsMsg.style.color='#84ff8a'; settingsMsg.textContent = 'Link salvo.';
+    setTimeout(()=> { settingsMsg.textContent=''; }, 2500);
+  });
 
-  // logout
-  btnLogout.addEventListener('click', ()=>{
-    afterLogin.style.display='none';
-    loginCard.style.display='block';
+  // reset data (apagar todas as contas)
+  resetData.addEventListener('click', ()=>{
+    if(!confirm('Atenção: isso apagará TODOS os usuários salvos localmente. Deseja continuar?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(SETTINGS_KEY);
+    // recarregar defaults
+    redirectInput.value = CONFIG.defaultRedirectURL;
     document.getElementById('loginUser').value=''; document.getElementById('loginPass').value='';
-    loginMsg.textContent='';
+    document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
+    alert('Dados resetados.');
   });
 
-  // admin login prompt open
-  openAdmin.addEventListener('click', ()=> {
-    adminLoginPrompt.style.display='block';
-    adminMsg.textContent='';
-  });
-
-  // admin login submit
-  btnAdminLogin.addEventListener('click', ()=>{
-    const aU = document.getElementById('adminUser').value.trim();
-    const aP = document.getElementById('adminPass').value;
-    if(aU === CONFIG.adminUser && aP === CONFIG.adminPass){
-      adminLoginPrompt.style.display='none';
-      adminArea.style.display='block';
-      fillAdminUsers();
-      adminMsg.textContent='';
-    } else {
-      adminMsg.style.color='#ff6b6b'; adminMsg.textContent = 'Credenciais admin inválidas.';
-    }
-  });
-
-  closeAdmin.addEventListener('click', ()=> { adminArea.style.display='none'; });
-
-  function fillAdminUsers(){
-    const st = getStorage();
-    // select
-    selectUserPay.innerHTML = '';
-    st.users.forEach(u=>{
-      const opt = document.createElement('option'); opt.value = u.username; opt.textContent = u.username;
-      selectUserPay.appendChild(opt);
-    });
-    refreshUsersTable();
-  }
-
-  function refreshUsersTable(){
-    const st = getStorage();
-    usersBody.innerHTML = '';
-    st.users.forEach(u=>{
-      const tr = document.createElement('tr');
-      const paid = checkPaid(u);
-      const tdName = document.createElement('td'); tdName.textContent = u.username;
-      const tdPaid = document.createElement('td'); tdPaid.textContent = u.paidUntil ? new Date(u.paidUntil).toLocaleDateString() : '—';
-      const tdStatus = document.createElement('td'); tdStatus.innerHTML = paid.paid ? '<span class="status-paid">PAGO</span>' : '<span class="status-unpaid">NÃO pago</span>';
-      const tdActions = document.createElement('td');
-      const btnUnpay = document.createElement('button'); btnUnpay.textContent='X'; btnUnpay.title='Marcar como não pago'; btnUnpay.style.marginRight='8px';
-      btnUnpay.addEventListener('click', ()=> { if(confirm('Marcar '+u.username+' como NÃO pago?')){ setPaidUntil(u.username, null); refreshUsersTable(); fillAdminUsers(); }});
-      const btnEdit = document.createElement('button'); btnEdit.textContent='Editar'; btnEdit.addEventListener('click', ()=>{
-        // quick fill in payer
-        selectUserPay.value = u.username;
-        paidUntil.value = u.paidUntil ? (new Date(u.paidUntil)).toISOString().slice(0,10) : '';
-      });
-      tdActions.appendChild(btnUnpay); tdActions.appendChild(btnEdit);
-      tr.appendChild(tdName); tr.appendChild(tdPaid); tr.appendChild(tdStatus); tr.appendChild(tdActions);
-      usersBody.appendChild(tr);
-    });
-    // refill select options
-    selectUserPay.innerHTML = '';
-    st.users.forEach(u=>{ const opt = document.createElement('option'); opt.value = u.username; opt.textContent = u.username; selectUserPay.appendChild(opt); });
-  }
-
-  // mark paid
-  markPaid.addEventListener('click', ()=>{
-    const u = selectUserPay.value;
-    const d = paidUntil.value;
-    if(!u) { alert('Selecione um usuário'); return; }
-    if(!d) { if(!confirm('Remover pagamento? OK para remover.')) return; setPaidUntil(u, null); refreshUsersTable(); alert('Pagamento removido'); return; }
-    setPaidUntil(u, d);
-    refreshUsersTable();
-    alert('Pagamento atualizado para '+u);
-  });
-
-  // save settings
-  saveSettings.addEventListener('click', ()=>{
-    const st = getStorage();
-    st.settings = st.settings || {};
-    st.settings.redirectUrl = redirectUrl.value || CONFIG.defaultRedirectURL;
-    st.settings.paymentUrl = paymentUrl.value || CONFIG.defaultPaymentURL;
-    saveStorage(st);
-    settingsMsg.textContent = 'Configurações salvas.';
-    setTimeout(()=> settingsMsg.textContent = '', 2500);
-  });
-
-  // go now button
-  goNow.addEventListener('click', ()=>{
-    const st = getStorage();
-    window.location.href = st.settings?.redirectUrl || CONFIG.defaultRedirectURL;
-  });
-
-  // export/import/reset
-  exportBtn.addEventListener('click', ()=> {
-    const data = exportJSON();
-    const w = window.open('about:blank','_blank');
-    w.document.write('<pre>'+escapeHtml(data)+'</pre>');
-  });
-
-  importBtn.addEventListener('click', ()=> {
-    const txt = prompt('Cole o JSON exportado aqui:');
-    if(!txt) return;
-    const r = importJSON(txt);
-    if(!r.ok) alert('Import falhou: '+r.msg); else { alert('Import ok'); fillAdminUsers(); }
-  });
-
-  resetBtn.addEventListener('click', ()=> {
-    if(confirm('Tem certeza? Isso apagará TODOS os usuários e configurações locais.')){ resetAll(); fillAdminUsers(); alert('Reset ok'); }
-  });
-
-  function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  // initial table fill
-  fillAdminUsers();
-
-  // convenience: create a demo user if no users exist
-  (function ensureDemo(){
-    const st = getStorage();
-    if(st.users.length === 0){
-      // create two demo users
-      st.users.push({ username: "usuario1", password: "senha1", paidUntil: null, createdAt: new Date().toISOString() });
-      st.users.push({ username: "pago", password: "senha2", paidUntil: new Date(Date.now() + 1000*60*60*24*30).toISOString(), createdAt: new Date().toISOString() });
-      saveStorage(st);
-      fillAdminUsers();
-    }
-  })();
-
-  // helper: redirect link in register area to external
-  // if you want inline register form, toggle display
-  document.getElementById('registerRedirect').addEventListener('click', ()=> {});
 }); // DOM ready
 </script>
 </body>
