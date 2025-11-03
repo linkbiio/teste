@@ -193,7 +193,7 @@ button:hover{
   </div>
 </div>
 
-<a href="https://wa.me/5511999999999" target="_blank" class="whatsapp-btn">
+<a href="https://wa.me/5522997301385" target="_blank" class="whatsapp-btn">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="32" height="32">
 </a>
 
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     if(!username || !pass){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Preencha usuário e senha.'; return; }
     const u = findUser(username);
     if(!u){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Usuário não encontrado.'; return; }
-    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem sucedido — redirecionando...';
+    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Você entrou com sucesso!';
     const hashed = await hashPassword(pass);
     if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
     setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
