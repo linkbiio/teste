@@ -47,13 +47,13 @@ body{
   padding:30px 25px;
   border-radius:16px;
   border:1px solid rgba(0,255,255,0.2);
-  box-shadow:0 0 20px rgba(0,255,255,0.5),0 12px 50px rgba(0,0,0,0.7);
   backdrop-filter: blur(10px);
   transition:0.3s;
 }
 
+/* Removido efeito neon do hover */
 .card:hover{
-  box-shadow:0 0 40px rgba(0,255,255,0.6),0 12px 50px rgba(0,0,0,0.7);
+  box-shadow:none;
 }
 
 h1{margin:0 0 8px;font-size:1.6rem}
@@ -82,9 +82,12 @@ button{
   font-weight:700;
   cursor:pointer;
   transition:0.3s;
-  box-shadow:0 0 15px rgba(0,255,255,0.7);
+  box-shadow:none; /* removido neon */
 }
-button:hover{background:#00e5ff;box-shadow:0 0 25px rgba(0,255,255,0.9);}
+button:hover{
+  background:#00e5ff;
+  box-shadow:none; /* removido neon */
+}
 
 .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
 .msg{margin-top:10px;font-size:0.95rem}
@@ -106,7 +109,7 @@ button:hover{background:#00e5ff;box-shadow:0 0 25px rgba(0,255,255,0.9);}
   color:#111;
   font-weight:800;
   font-size:1.2rem;
-  box-shadow:0 0 15px rgba(0,255,255,0.7);
+  box-shadow:none; /* removido neon */
 }
 
 /* Botão flutuante WhatsApp */
@@ -195,6 +198,7 @@ button:hover{background:#00e5ff;box-shadow:0 0 25px rgba(0,255,255,0.9);}
 </a>
 
 <script>
+// Mantive todo o JS original sem alterações
 /* LOGIN REGISTRATION */
 const CONFIG = { redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" };
 const STORAGE_KEY = "binaryclub_users_v1";
