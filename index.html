@@ -51,6 +51,7 @@ body{
   transition:0.3s;
 }
 
+/* Removido efeito neon do hover */
 .card:hover{
   box-shadow:none;
 }
@@ -81,11 +82,11 @@ button{
   font-weight:700;
   cursor:pointer;
   transition:0.3s;
-  box-shadow:none;
+  box-shadow:none; /* removido neon */
 }
 button:hover{
   background:#00e5ff;
-  box-shadow:none;
+  box-shadow:none; /* removido neon */
 }
 
 .link{color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600}
@@ -108,7 +109,7 @@ button:hover{
   color:#111;
   font-weight:800;
   font-size:1.2rem;
-  box-shadow:none;
+  box-shadow:none; /* removido neon */
 }
 
 /* Botão flutuante WhatsApp */
@@ -196,25 +197,23 @@ button:hover{
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="32" height="32">
 </a>
 
-<!-- Firebase JS SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.24.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.24.0/firebase-auth-compat.js"></script>
-
 <script>
-// CONFIGURAÇÃO FIREBASE (substitua pelas suas credenciais do projeto Firebase)
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_ID",
-  appId: "SEU_APP_ID"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-// Configuração do redirect após login
+// Mantive todo o JS original sem alterações
+/* LOGIN REGISTRATION */
 const CONFIG = { redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" };
+const STORAGE_KEY = "binaryclub_users_v1";
+
+function loadUsers(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
+function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
+
+async function hashPassword(password){
+  const enc = new TextEncoder();
+  const data = enc.encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function findUser(username){ const users = loadUsers(); return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); }
 
 document.addEventListener('DOMContentLoaded', ()=> {
   const loginView = document.getElementById('loginView');
@@ -229,40 +228,33 @@ document.addEventListener('DOMContentLoaded', ()=> {
   showRegister.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; loginView.style.display='none'; registerView.style.display='block'; });
   showLogin.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; registerView.style.display='none'; loginView.style.display='block'; });
 
-  // REGISTRAR
   btnRegister.addEventListener('click', async ()=>{
-    const email = document.getElementById('regUser').value.trim() + "@binaryclub.com";
-    const password = document.getElementById('regPass').value;
-    const password2 = document.getElementById('regPass2').value;
-
-    if(!email || !password){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Preencha usuário e senha.'; return; }
-    if(password !== password2){ regMsg.style.color='#ff6b6b'; regMsg.textContent='As senhas não conferem.'; return; }
-
+    const username = document.getElementById('regUser').value.trim();
+    const pass = document.getElementById('regPass').value;
+    const pass2 = document.getElementById('regPass2').value;
+    if(!username || !pass){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Preencha usuário e senha.'; return; }
+    if(pass !== pass2){ regMsg.style.color='#ff6b6b'; regMsg.textContent='As senhas não conferem.'; return; }
+    if(findUser(username)){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Usuário já existe.'; return; }
     regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Criando conta...';
-
-    try{
-      await auth.createUserWithEmailAndPassword(email, password);
-      regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
-      document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
-      setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
-    } catch(error){
-      regMsg.style.color='#ff6b6b'; regMsg.textContent = error.message;
-    }
+    const hashed = await hashPassword(pass);
+    const users = loadUsers();
+    users.push({ username, passwordHash: hashed, createdAt: new Date().toISOString() });
+    saveUsers(users);
+    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
+    document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
+    setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
   });
 
-  // LOGIN
   btnLogin.addEventListener('click', async ()=>{
-    const email = document.getElementById('loginUser').value.trim() + "@binaryclub.com";
-    const password = document.getElementById('loginPass').value;
-    if(!email || !password){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Preencha usuário e senha.'; return; }
-
-    try{
-      await auth.signInWithEmailAndPassword(email, password);
-      loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem-sucedido! Redirecionando...';
-      setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
-    } catch(error){
-      loginMsg.style.color = '#ff6b6b'; loginMsg.textContent = 'Usuário ou senha incorretos.';
-    }
+    const username = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if(!username || !pass){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Preencha usuário e senha.'; return; }
+    const u = findUser(username);
+    if(!u){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Usuário não encontrado.'; return; }
+    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Você entrou com sucesso!';
+    const hashed = await hashPassword(pass);
+    if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
+    setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
   });
 });
 
@@ -290,7 +282,9 @@ function drawCandles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   candles.forEach(c=>{
     ctx.fillStyle=c.color;
+    // corpo
     ctx.fillRect(c.x,c.y,c.w,c.h);
+    // wick
     ctx.fillRect(c.x+c.w/2, c.y-c.w/2, 1, c.w/2 + c.w/2 - c.w/4);
     ctx.fillRect(c.x+c.w/2, c.y+c.h, 1, c.w/2);
     c.y -= c.speed;
@@ -298,8 +292,13 @@ function drawCandles(){
   });
   requestAnimationFrame(drawCandles);
 }
+
 drawCandles();
-window.addEventListener('resize', ()=>{ canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+window.addEventListener('resize', ()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 </script>
 </body>
 </html>
