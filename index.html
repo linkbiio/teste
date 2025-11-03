@@ -10,9 +10,7 @@
   --muted:#bfbfbf;
   --whatsapp:#25D366;
 }
-
 *{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif;margin:0;padding:0;}
-
 body{
   min-height:100vh;
   display:flex;
@@ -51,10 +49,7 @@ body{
   backdrop-filter: blur(10px);
   transition:0.3s;
 }
-
-.card:hover{
-  box-shadow:0 0 40px rgba(0,255,255,0.6),0 12px 50px rgba(0,0,0,0.7);
-}
+.card:hover{ box-shadow:0 0 40px rgba(0,255,255,0.6),0 12px 50px rgba(0,0,0,0.7); }
 
 h1{margin:0 0 8px;font-size:1.6rem}
 p.small{margin:0;color:var(--muted);font-size:0.9rem}
@@ -149,39 +144,28 @@ button:hover{background:#00e5ff;box-shadow:0 0 25px rgba(0,255,255,0.9);}
       </div>
     </div>
 
-    <!-- LOGIN -->
     <div id="loginView">
       <label for="loginUser">Usuário</label>
       <input id="loginUser" type="text" placeholder="Seu usuário" autocomplete="username">
-
       <label for="loginPass">Senha</label>
       <input id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
-
       <button id="btnLogin">Entrar</button>
-
       <div class="msg" id="loginMsg"></div>
-
       <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
         <span class="small">Não tem conta?</span>
         <a id="showRegister" class="link">Criar nova conta</a>
       </div>
     </div>
 
-    <!-- REGISTER -->
     <div id="registerView" style="display:none">
       <label for="regUser">Escolha um usuário</label>
       <input id="regUser" type="text" placeholder="Ex: joao123">
-
       <label for="regPass">Escolha uma senha</label>
       <input id="regPass" type="password" placeholder="Sua senha">
-
       <label for="regPass2">Repita a senha</label>
       <input id="regPass2" type="password" placeholder="Repita a senha">
-
       <button id="btnRegister">Criar conta</button>
-
       <div class="msg" id="regMsg"></div>
-
       <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
         <span class="small">Já tem conta?</span>
         <a id="showLogin" class="link">Entrar</a>
@@ -195,11 +179,11 @@ button:hover{background:#00e5ff;box-shadow:0 0 25px rgba(0,255,255,0.9);}
 </a>
 
 <script>
-/* LOGIN REGISTRATION */
+// LOGIN/REGISTER
 const CONFIG = { redirectURL: "https://eusouarthurmartins.github.io/Estrategia-OTC/" };
-const STORAGE_KEY = "binaryclub_users_v1";
+const STORAGE_KEY = "binaryclub_users_v2";
 
-function loadUsers(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; } }
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY))||[]; } catch(e){ return []; } }
 function saveUsers(users){ localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); }
 
 async function hashPassword(password){
@@ -209,91 +193,116 @@ async function hashPassword(password){
   return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-function findUser(username){ const users = loadUsers(); return users.find(u=>u.username.toLowerCase()===username.toLowerCase()); }
+function findUser(username){ return loadUsers().find(u=>u.username.toLowerCase()===username.toLowerCase()); }
 
-document.addEventListener('DOMContentLoaded', ()=> {
-  const loginView = document.getElementById('loginView');
-  const registerView = document.getElementById('registerView');
-  const showRegister = document.getElementById('showRegister');
-  const showLogin = document.getElementById('showLogin');
-  const btnRegister = document.getElementById('btnRegister');
-  const btnLogin = document.getElementById('btnLogin');
-  const regMsg = document.getElementById('regMsg');
-  const loginMsg = document.getElementById('loginMsg');
+document.addEventListener('DOMContentLoaded', ()=>{
+  const loginView=document.getElementById('loginView');
+  const registerView=document.getElementById('registerView');
+  document.getElementById('showRegister').onclick=()=>{loginView.style.display='none'; registerView.style.display='block';}
+  document.getElementById('showLogin').onclick=()=>{registerView.style.display='none'; loginView.style.display='block';}
 
-  showRegister.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; loginView.style.display='none'; registerView.style.display='block'; });
-  showLogin.addEventListener('click', ()=> { loginMsg.textContent=''; regMsg.textContent=''; registerView.style.display='none'; loginView.style.display='block'; });
-
-  btnRegister.addEventListener('click', async ()=>{
-    const username = document.getElementById('regUser').value.trim();
-    const pass = document.getElementById('regPass').value;
-    const pass2 = document.getElementById('regPass2').value;
-    if(!username || !pass){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Preencha usuário e senha.'; return; }
-    if(pass !== pass2){ regMsg.style.color='#ff6b6b'; regMsg.textContent='As senhas não conferem.'; return; }
-    if(findUser(username)){ regMsg.style.color='#ff6b6b'; regMsg.textContent='Usuário já existe.'; return; }
-    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Criando conta...';
-    const hashed = await hashPassword(pass);
-    const users = loadUsers();
-    users.push({ username, passwordHash: hashed, createdAt: new Date().toISOString() });
+  document.getElementById('btnRegister').onclick=async()=>{
+    const u=document.getElementById('regUser').value.trim();
+    const p=document.getElementById('regPass').value;
+    const p2=document.getElementById('regPass2').value;
+    const msg=document.getElementById('regMsg');
+    if(!u||!p){msg.style.color='#ff6b6b'; msg.textContent='Preencha usuário e senha.'; return;}
+    if(p!==p2){msg.style.color='#ff6b6b'; msg.textContent='As senhas não conferem.'; return;}
+    if(findUser(u)){msg.style.color='#ff6b6b'; msg.textContent='Usuário já existe.'; return;}
+    msg.style.color='#84ff8a'; msg.textContent='Criando conta...';
+    const hashed=await hashPassword(p);
+    const users=loadUsers();
+    users.push({username:u,passwordHash:hashed});
     saveUsers(users);
-    regMsg.style.color = '#84ff8a'; regMsg.textContent = 'Conta criada! Agora faça login.';
+    msg.textContent='Conta criada! Agora faça login.';
     document.getElementById('regUser').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
-    setTimeout(()=> { registerView.style.display='none'; loginView.style.display='block'; }, 800);
-  });
+    setTimeout(()=>{registerView.style.display='none'; loginView.style.display='block';},800);
+  }
 
-  btnLogin.addEventListener('click', async ()=>{
-    const username = document.getElementById('loginUser').value.trim();
-    const pass = document.getElementById('loginPass').value;
-    if(!username || !pass){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Preencha usuário e senha.'; return; }
-    const u = findUser(username);
-    if(!u){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Usuário não encontrado.'; return; }
-    loginMsg.style.color = '#84ff8a'; loginMsg.textContent = 'Login bem sucedido — redirecionando...';
-    const hashed = await hashPassword(pass);
-    if(hashed !== u.passwordHash){ loginMsg.style.color='#ff6b6b'; loginMsg.textContent='Senha incorreta.'; return; }
-    setTimeout(()=> { window.location.href = CONFIG.redirectURL; }, 700);
-  });
+  document.getElementById('btnLogin').onclick=async()=>{
+    const u=document.getElementById('loginUser').value.trim();
+    const p=document.getElementById('loginPass').value;
+    const msg=document.getElementById('loginMsg');
+    if(!u||!p){msg.style.color='#ff6b6b'; msg.textContent='Preencha usuário e senha.'; return;}
+    const user=findUser(u);
+    if(!user){msg.style.color='#ff6b6b'; msg.textContent='Usuário não encontrado.'; return;}
+    const hashed=await hashPassword(p);
+    if(hashed!==user.passwordHash){msg.style.color='#ff6b6b'; msg.textContent='Senha incorreta.'; return;}
+    msg.style.color='#84ff8a'; msg.textContent='Login bem-sucedido — redirecionando...';
+    setTimeout(()=>{window.location.href=CONFIG.redirectURL;},700);
+  }
 });
 
-/* CANVAS CANDLES REALISTAS */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// CANVAS TRADING REALISTA
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-const candles = [];
-for(let i=0;i<60;i++){
+const candles=[];
+const candleCount=80;
+for(let i=0;i<candleCount;i++){
+  const x=i*15+Math.random()*5;
+  const h=50+Math.random()*80;
+  const wickTop=Math.random()*20;
+  const wickBottom=Math.random()*20;
   candles.push({
-    x: Math.random()*canvas.width,
-    y: Math.random()*canvas.height,
-    w: 6 + Math.random()*4,
-    h: 30 + Math.random()*50,
-    wickTop: 10 + Math.random()*15,
-    wickBottom: 10 + Math.random()*15,
+    x:x,
+    y:canvas.height - h - Math.random()*50,
+    w:10,
+    h:h,
+    wickTop:wickTop,
+    wickBottom:wickBottom,
     color: Math.random()>0.5?'#00FFFF':'#FF5555',
-    speed: 0.2 + Math.random()*0.5
+    speed: 0.1 + Math.random()*0.3
   });
 }
 
-function drawCandles(){
+// linhas de tendência
+const trendLines=[];
+for(let i=0;i<3;i++){
+  trendLines.push({
+    y: Math.random()*canvas.height,
+    speed:0.05 + Math.random()*0.05,
+    color:'rgba(0,255,255,0.2)'
+  });
+}
+
+function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // trendlines
+  trendLines.forEach(t=>{
+    ctx.strokeStyle=t.color;
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(0,t.y);
+    ctx.lineTo(canvas.width,t.y);
+    ctx.stroke();
+    t.y += t.speed;
+    if(t.y>canvas.height) t.y=0;
+  });
+
+  // candles
   candles.forEach(c=>{
     ctx.fillStyle=c.color;
-    // corpo
-    ctx.fillRect(c.x,c.y,c.w,c.h);
     // wick
-    ctx.fillRect(c.x+c.w/2, c.y-c.w/2, 1, c.w/2 + c.w/2 - c.w/4);
-    ctx.fillRect(c.x+c.w/2, c.y+c.h, 1, c.w/2);
+    ctx.fillRect(c.x+c.w/2, c.y - c.wickTop,1,c.wickTop);
+    ctx.fillRect(c.x+c.w/2, c.y + c.h,1,c.wickBottom);
+    // body
+    ctx.fillRect(c.x,c.y,c.w,c.h);
+    // anima
     c.y -= c.speed;
-    if(c.y + c.h + c.w < 0) c.y = canvas.height + Math.random()*50;
+    if(c.y + c.h + c.wickBottom<0) c.y = canvas.height + Math.random()*50;
   });
-  requestAnimationFrame(drawCandles);
+
+  requestAnimationFrame(draw);
 }
+draw();
 
-drawCandles();
-
-window.addEventListener('resize', ()=>{
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+window.addEventListener('resize',()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
 });
 </script>
 </body>
